@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.unibank.lan/ulviyya.musayeva/soft-pos-generator.git
-git branch -M main
-git push -uf origin main
+git remote add origin https://gitlab.unibank.lan/card-processing/soft-pos.git
+git branch -M master
+git push -uf origin master
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.unibank.lan/ulviyya.musayeva/soft-pos-generator/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.unibank.lan/card-processing/soft-pos/-/settings/integrations)
 
 ## Collaborate with your team
 
