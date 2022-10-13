@@ -1,0 +1,14 @@
+logging:
+  level:
+    az:
+      unibank:
+        softpos: TRACE
+
+application:
+  endpointDefault: http://10.142.0.11:10017
+  initiatorRidDefault: TEST
+springfox:
+  documentation:
+    auto-startup: true
+    swagger-ui:
+      enabled: true

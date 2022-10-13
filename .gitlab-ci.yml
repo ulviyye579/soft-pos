@@ -1,0 +1,74 @@
+image: maven:3-jdk-8
+
+services:
+  - docker:dind
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .m2/
+
+stages:
+  - build
+  - release
+  - deploy
+
+build:
+  stage: build
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 7d
+  script:
+    - mvn $MAVEN_OPTS -Dmaven.test.skip=true package
+
+release:
+  stage: release
+  image: docker:latest
+  script:
+    - docker login -u $CI_REGISTRY_USER  -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build . -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID -t $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+
+.deploy_image:
+  stage: deploy
+  image: dtzar/helm-kubectl
+  after_script:
+    - export APP_NAME=`grep -e "^\s\sname:" deploy/base/deployment.yaml | cut -d" " -f4`
+    - kubectl rollout status deployment.v1.apps/$APP_NAME
+    - kubectl get deploy
+    - kubectl rollout status deployment.v1.apps/$APP_NAME
+
+.deploy_image_dev:
+  extends: .deploy_image
+  script:
+    - mkdir -p ~/.kube; echo "$CI_K8S_CONFIG_DEV" > ~/.kube/config
+    - sed -ie 's/{{IMAGE_VERSION}}/'"$CI_PIPELINE_ID"'/g ; s/{{ACTIVE_PROFILE}}/'"dev"'/g' deploy/base/deployment.yaml
+    - kubectl apply -k deploy/dev
+
+deploy:dev:manual:
+  extends: .deploy_image_dev
+  except:
+    - master
+  when: manual
+
+deploy:dev:
+  extends: .deploy_image_dev
+  when: manual
+  only:
+    - master
+
+deploy:prod:
+  extends: .deploy_image
+  script:
+    - mkdir -p ~/.kube; echo "$CI_K8S_CONFIG_PROCDMZ" > ~/.kube/config
+    - sed -ie 's/{{IMAGE_VERSION}}/'"$CI_PIPELINE_ID"'/g ; s/{{ACTIVE_PROFILE}}/'"prod"'/g' deploy/base/deployment.yaml
+    - kubectl apply -k deploy/prod
+  when: manual
+  only:
+    - master
+  tags:
+    - processing

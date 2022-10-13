@@ -1,0 +1,89 @@
+
+package com.tranzaxis.schemas.crypto;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+
+/**
+ * <p>Java class for ExportEmvPinBlockRs complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="ExportEmvPinBlockRs"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="PinBlockOut" use="required" type="{http://schemas.radixware.org/types.xsd}BinHex" /&gt;
+ *       &lt;attribute name="Mac" use="required" type="{http://schemas.radixware.org/types.xsd}BinHex" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ExportEmvPinBlockRs")
+public class ExportEmvPinBlockRs {
+
+    @XmlAttribute(name = "PinBlockOut", required = true)
+    @XmlJavaTypeAdapter(HexBinaryAdapter.class)
+    protected byte[] pinBlockOut;
+    @XmlAttribute(name = "Mac", required = true)
+    @XmlJavaTypeAdapter(HexBinaryAdapter.class)
+    protected byte[] mac;
+
+    /**
+     * Gets the value of the pinBlockOut property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public byte[] getPinBlockOut() {
+        return pinBlockOut;
+    }
+
+    /**
+     * Sets the value of the pinBlockOut property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPinBlockOut(byte[] value) {
+        this.pinBlockOut = value;
+    }
+
+    /**
+     * Gets the value of the mac property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public byte[] getMac() {
+        return mac;
+    }
+
+    /**
+     * Sets the value of the mac property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMac(byte[] value) {
+        this.mac = value;
+    }
+
+}
