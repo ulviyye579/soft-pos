@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: soft-pos-service
+  namespace: card-processing
+spec:
+  hosts:
+    - rtp-proxy.unibank.lan
+  gateways:
+    - rtp-proxy-gateway
+  http:
+      route:
+        - destination:
+#            host: proxy-rtp-service.card-processing.svc.cluster.local
+            port:
+              number: 8080

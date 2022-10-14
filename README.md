@@ -1,6 +1,6 @@
-# soft-pos
+# Soft Pos Generator
 
-MPOS Generator for Corporate Customers
+MPos Generator for Corporate Customers
 
 ## Getting started
 

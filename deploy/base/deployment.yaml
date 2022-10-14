@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soft-pos
+  labels:
+    app: soft-pos
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: soft-pos
+  template:
+    metadata:
+      labels:
+        app: soft-pos
+        version: stable
+      annotations:
+        traffic.sidecar.istio.io/includeInboundPorts: "8082, 8083"
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8083'
+        prometheus.io/path: '/actuator/prometheus'
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: soft-pos
+          image: gitlab.unibank.lan:4567/card-processing/soft-pos:{{IMAGE_VERSION}}
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: '1'
+            limits:
+              memory: 2048Mi
+              cpu: '2'
+          ports:
+            - containerPort: 8082
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8082
+            initialDelaySeconds: 180
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8082
+            initialDelaySeconds: 180
+            periodSeconds: 30
+          env:
+            - name: ACTIVE_PROFILE
+              value: {{ACTIVE_PROFILE}}
+            - name: TZ
+              value: Asia/Baku

@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: pos-soft
+  namespace: card-processing
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+        - rtp-proxy.unibank.lan
+      port:
+        name: http
+        number: 80
+        protocol: HTTP

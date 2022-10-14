@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tx-prod
+spec:
+  ports:
+    - name: tx
+      port: 10011
+      protocol: TCP
+      targetPort: 10011
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: tx-prod
+subsets:
+  - addresses:
+      - ip: 10.141.0.10
+    ports:
+      - name: tx
+        port: 10011

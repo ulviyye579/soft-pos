@@ -1,0 +1,12 @@
+#logging:
+#  level:
+#    az:
+#      unibank:
+#        softpos: INFO
+application:
+  endpointDefault: http://10.141.0.10:10314
+  initiatorRidDefault: POS_GENERATOR
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: false
