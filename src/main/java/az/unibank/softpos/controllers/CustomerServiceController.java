@@ -25,7 +25,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@RequestMapping("/ws/rest")
+@RequestMapping("/soft/pos")
 @RequiredArgsConstructor
 public class CustomerServiceController {
     private final CorporateCustomer corporateCustomer;
