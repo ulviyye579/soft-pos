@@ -8,7 +8,7 @@ spec:
     istio: ingressgateway
   servers:
     - hosts:
-        - rtp-proxy.unibank.lan
+        - post-sof.unibank.lan
       port:
         name: http
         number: 80

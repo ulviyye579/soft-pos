@@ -5,12 +5,12 @@ metadata:
   namespace: card-processing
 spec:
   hosts:
-    - rtp-proxy.unibank.lan
+    - post-sof.unibank.lan
   gateways:
-    - rtp-proxy-gateway
+    - pos-soft
   http:
       route:
         - destination:
-#            host: proxy-rtp-service.card-processing.svc.cluster.local
+            host: soft-pos-service.card-processing.svc.cluster.local
             port:
-              number: 8080
+              number: 8082
