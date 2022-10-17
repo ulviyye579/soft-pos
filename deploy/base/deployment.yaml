@@ -20,9 +20,9 @@ spec:
         app: soft-pos
         version: stable
       annotations:
-        traffic.sidecar.istio.io/includeInboundPorts: "8082, 8083"
+        traffic.sidecar.istio.io/includeInboundPorts: "8082, 8080"
         prometheus.io/scrape: 'true'
-        prometheus.io/port: '8083'
+        prometheus.io/port: '8080'
         prometheus.io/path: '/actuator/prometheus'
     spec:
       imagePullSecrets:
@@ -43,13 +43,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: 8082
+              port: 8080
             initialDelaySeconds: 180
             periodSeconds: 30
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: 8082
+              port: 8080
             initialDelaySeconds: 180
             periodSeconds: 30
           env:

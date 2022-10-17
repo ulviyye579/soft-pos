@@ -2,6 +2,7 @@ package az.unibank.softpos.service.methods;
 
 
 import az.unibank.softpos.dto.MiniResponse;
+import az.unibank.softpos.dto.SoftResponse;
 import az.unibank.softpos.dto.requests.Company;
 import az.unibank.softpos.dto.requests.CorpCustomer;
 import az.unibank.softpos.dto.requests.Device;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
 import java.util.Map;
@@ -266,12 +268,12 @@ public class CorporateCustomer {
 
         ObjectId contractObj = new ObjectId();
         contractObj.setId(device.getContractId());
-        JAXBElement<ObjectId> jaxbElementContract = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN,"Contract"), ObjectId.class, contractObj);
+        JAXBElement<ObjectId> jaxbElementContract = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Contract"), ObjectId.class, contractObj);
         terminal.setContract(jaxbElementContract);
 
         ObjectId obj2 = new ObjectId();
         obj2.setId(610L);
-        JAXBElement<ObjectId> jaxbElementRiskProfile = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN,"RiskProfile"), ObjectId.class, obj2);
+        JAXBElement<ObjectId> jaxbElementRiskProfile = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "RiskProfile"), ObjectId.class, obj2);
         terminal.setRiskProfile(jaxbElementRiskProfile);
 
 
@@ -309,27 +311,90 @@ public class CorporateCustomer {
         return miniResponse;
     }
 
-    public boolean activateStatusTerminal(String id) {
-        if (!id.isEmpty()) {
-            return true;
+    public SoftResponse activateStatusTerminal(String id, String headerRequestorInitiatorRid) throws Exception {
+        SoftResponse softResponse = new SoftResponse();
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        TranInvoke tranInvoke = new TranInvoke();
+        Request request = new Request();
+        Request.Specific specific = new Request.Specific();
+        Request.Specific.Admin admin = new Request.Specific.Admin();
+        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        request.setKind(Constants.TRAN_KIND_MODIFY_TERMINAL);
+        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        admin.setObjectMustExist(true);
+        Terminal terminal = new Terminal();
+        terminal.setName(id);
+        terminal.setStatus("A");
+
+        admin.setTerminal(terminal);
+        specific.setAdmin(admin);
+        request.setSpecific(specific);
+        tranInvoke.setRequest(request);
+        StringWriter sw = new StringWriter();
+        String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
+        Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
+            softResponse.setId(Constants.SUCCESS_CODE_000);
+            softResponse.setResult(String.valueOf(Boolean.TRUE));
+            softResponse.setMessage(Constants.APPROVED_RESULT);
+        } else {
+            softResponse.setId(Constants.DECLINED_CODE_001);
+            softResponse.setResult(String.valueOf(Boolean.FALSE));
+            softResponse.setMessage("Failed");
+
         }
-        return false;
+        return softResponse;
     }
 
-    public String deactivateStatusTerminal(String id) {
-        if (!id.isEmpty()) {
+    public SoftResponse deactivateStatusTerminal(String id, String headerRequestorInitiatorRid) throws Exception {
+        SoftResponse softResponse = new SoftResponse();
 
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        TranInvoke tranInvoke = new TranInvoke();
+        Request request = new Request();
+        Request.Specific specific = new Request.Specific();
+        Request.Specific.Admin admin = new Request.Specific.Admin();
+        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        request.setKind(Constants.TRAN_KIND_MODIFY_TERMINAL);
+        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        admin.setObjectMustExist(true);
+        Terminal terminal = new Terminal();
+        terminal.setName(id);
+        terminal.setStatus("C");
 
-            return "1";
+        admin.setTerminal(terminal);
+        specific.setAdmin(admin);
+        request.setSpecific(specific);
+        tranInvoke.setRequest(request);
+        StringWriter sw = new StringWriter();
+        String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
+        Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
+            softResponse.setId(Constants.SUCCESS_CODE_000);
+            softResponse.setResult(String.valueOf(Boolean.TRUE));
+            softResponse.setMessage(Constants.APPROVED_RESULT);
+        } else {
+            softResponse.setId(Constants.DECLINED_CODE_001);
+            softResponse.setResult(String.valueOf(Boolean.FALSE));
+            softResponse.setMessage("Failed");
+
         }
-        return "0";
+        return softResponse;
     }
 
-    public String getStatusTerminal(String id) {
+    public MiniResponse getStatusTerminal(String id) {
+        MiniResponse miniResponse = new MiniResponse();
+
         if (!id.isEmpty()) {
-            return "active";
+            miniResponse.setCode(Constants.SUCCESS_CODE_000);
+            miniResponse.setDescription("active");
+            miniResponse.setId("1");
+        } else {
+            miniResponse.setCode(Constants.DECLINED_CODE_001);
+            miniResponse.setDescription("deactive/closed");
+            miniResponse.setId("0");
         }
-        return "closed";
+        return miniResponse;
     }
 }
 
