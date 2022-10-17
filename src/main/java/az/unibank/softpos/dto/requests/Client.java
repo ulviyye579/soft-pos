@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Client {
     @ApiModelProperty( example = "123456")
-    private String CustomerID;
+    private String customerId;
     @ApiModelProperty( example = "123477")
-    private String clientID;
+    private String clientId;
 }
