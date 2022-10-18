@@ -6,6 +6,6 @@ spec:
   selector:
     app: soft-pos
   ports:
-    - port: 8082
+    - port: 8080
       protocol: TCP
   type: ClusterIP
