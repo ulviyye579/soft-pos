@@ -7,9 +7,9 @@ spec:
   hosts:
     - dev-pos-soft.unibank.lan
   gateways:
-    - pos-soft
+    - soft-pos-gateway
   http:
-    - name: "pos-soft-vs"
+    - name: "soft-pos-vs"
 #      match:
 #        - uri:
 #            prefix: "/SoftPos"
@@ -19,4 +19,4 @@ spec:
         - destination:
             host: soft-pos-service.card-processing.svc.cluster.local
             port:
-              number: 8082
+              number: 8080

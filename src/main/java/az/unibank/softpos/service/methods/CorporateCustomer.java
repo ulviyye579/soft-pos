@@ -13,6 +13,7 @@ import com.tranzaxis.schemas.acquiring_admin.BranchId;
 import com.tranzaxis.schemas.acquiring_admin.Terminal;
 import com.tranzaxis.schemas.common_types.MailAddress;
 import com.tranzaxis.schemas.common_types.ObjectId;
+import com.tranzaxis.schemas.common_types.ParamValue;
 import com.tranzaxis.schemas.contracts_admin.Contract;
 import com.tranzaxis.schemas.subjects_admin.*;
 import com.tranzaxis.schemas.tran.Request;
@@ -296,8 +297,6 @@ public class CorporateCustomer {
         JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Address"), MailAddress.class,
                 mailAddress);
         terminal.setAddress(jaxbElementAddress);
-
-
         admin.setTerminal(terminal);
         specific.setAdmin(admin);
         request.setSpecific(specific);
@@ -305,13 +304,23 @@ public class CorporateCustomer {
         StringWriter sw = new StringWriter();
         String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
         Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+//        if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
+//            request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+//            request.setKind("Udt");
+//            request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+//            request.setUdtType("GetLastTerminalRid");
+//            tranInvoke.setRequest(request);
+//            String xml = init.jaxbProcessor.toXml(sw, tranInvoke);
+//            Response responseTerminalId = init.callSOAP(xml, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+//            String lastTerminalRid = responseTerminalId.getUserAttrs().getParamValue().get(0).toString();
         miniResponse.setId(response.getSpecific().getAdmin().getTerminal().getName());
         miniResponse.setCode(SUCCESS_CODE_000);
         miniResponse.setDescription(APPROVED_RESULT);
-        return miniResponse;
+
+    return miniResponse;
     }
 
-    public SoftResponse activateStatusTerminal(String id, String headerRequestorInitiatorRid) throws Exception {
+    public SoftResponse activateStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
         SoftResponse softResponse = new SoftResponse();
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();
@@ -323,7 +332,7 @@ public class CorporateCustomer {
         request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
         admin.setObjectMustExist(true);
         Terminal terminal = new Terminal();
-        terminal.setName(id);
+        terminal.setId(id);
         terminal.setStatus("A");
 
         admin.setTerminal(terminal);
@@ -346,7 +355,7 @@ public class CorporateCustomer {
         return softResponse;
     }
 
-    public SoftResponse deactivateStatusTerminal(String id, String headerRequestorInitiatorRid) throws Exception {
+    public SoftResponse deactivateStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
         SoftResponse softResponse = new SoftResponse();
 
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
@@ -359,7 +368,7 @@ public class CorporateCustomer {
         request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
         admin.setObjectMustExist(true);
         Terminal terminal = new Terminal();
-        terminal.setName(id);
+        terminal.setId(id);
         terminal.setStatus("C");
 
         admin.setTerminal(terminal);

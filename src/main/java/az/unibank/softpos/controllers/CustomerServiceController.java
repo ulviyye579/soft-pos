@@ -88,7 +88,7 @@ public class CustomerServiceController {
 
     @PutMapping(value = "/corporate-customer/terminal/activation/id/{id}",
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<SoftResponse> activateTerminal(@PathVariable("id") String id,
+    public ResponseEntity<SoftResponse> activateTerminal(@PathVariable("id") Long id,
                                                          @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid){
         SoftResponse softResponse = new SoftResponse();
 
@@ -108,7 +108,7 @@ public class CustomerServiceController {
 
     @PutMapping(value = "/corporate-customer/terminal/deactivation/id/{id}",
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<SoftResponse> deactivateTerminal(@PathVariable("id") String id,
+    public ResponseEntity<SoftResponse> deactivateTerminal(@PathVariable("id") Long id,
                                                            @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         SoftResponse softResponse = new SoftResponse();
 
