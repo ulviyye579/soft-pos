@@ -17,6 +17,6 @@ spec:
 #        uri: "/"
       route:
         - destination:
-            host: soft-pos-service.card-processing.svc.cluster.local
+            host: proxy-rtp-service.card-processing.svc.cluster.local
             port:
               number: 8080
