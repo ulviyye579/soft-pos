@@ -238,6 +238,7 @@ public class CorporateCustomer {
 
     public MiniResponse createTerminal(Device device, String headerRequestorInitiatorRid) throws Exception {
         MiniResponse miniResponse = new MiniResponse();
+        String terminalRid = getTerminalRid(headerRequestorInitiatorRid);
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
@@ -249,7 +250,7 @@ public class CorporateCustomer {
 
         admin.setObjectMustExist(false);
         Terminal terminal = new Terminal();
-        terminal.setName("SP00003");
+        terminal.setName(terminalRid);
         terminal.setTermType("Pos");
         JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "ExternalRid"), String.class, device.getClientID());
         terminal.setExternalRid(jaxbElementExternalRid);
@@ -258,7 +259,6 @@ public class CorporateCustomer {
         terminal.setTitle(jaxbElementTitle);
 
         BranchId branchId = new BranchId();
-//        branchId.setCode(21L);
         branchId.setId(21L);
         JAXBElement<BranchId> jaxbElementBranch = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Branch"), BranchId.class, branchId);
         terminal.setBranch(jaxbElementBranch);
@@ -304,20 +304,30 @@ public class CorporateCustomer {
         StringWriter sw = new StringWriter();
         String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
         Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
-//        if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
-//            request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-//            request.setKind("Udt");
-//            request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
-//            request.setUdtType("GetLastTerminalRid");
-//            tranInvoke.setRequest(request);
-//            String xml = init.jaxbProcessor.toXml(sw, tranInvoke);
-//            Response responseTerminalId = init.callSOAP(xml, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
-//            String lastTerminalRid = responseTerminalId.getUserAttrs().getParamValue().get(0).toString();
-        miniResponse.setId(response.getSpecific().getAdmin().getTerminal().getName());
-        miniResponse.setCode(SUCCESS_CODE_000);
-        miniResponse.setDescription(APPROVED_RESULT);
+            miniResponse.setId(response.getSpecific().getAdmin().getTerminal().getName());
+            miniResponse.setCode(SUCCESS_CODE_000);
+            miniResponse.setDescription(APPROVED_RESULT);
+            return miniResponse;
+        }
 
-    return miniResponse;
+    public String getTerminalRid(String headerRequestorInitiatorRid) throws Exception {
+        String termRid ;
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        TranInvoke tranInvoke = new TranInvoke();
+        Request request = new Request();
+        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        request.setKind("Udt");
+        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        request.setUdtType("GetLastTerminalRid");
+        tranInvoke.setRequest(request);
+        StringWriter sw = new StringWriter();
+        String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
+        Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        long id = Long.parseLong(response.getUserAttrs().getParamValue().get(0).getVal().toString().substring(2,7))+ 1;
+        System.out.println("id : " + id);
+        termRid = "SP" + id;
+        System.out.println("termRid: " +termRid);
+        return termRid;
     }
 
     public SoftResponse activateStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
