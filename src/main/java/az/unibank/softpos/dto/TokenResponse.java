@@ -11,8 +11,6 @@ import javax.xml.bind.annotation.XmlType;
 @Getter
 @Setter
 @NoArgsConstructor
-@XmlRootElement(name = "Response")
-@XmlType(propOrder = {"authenticated", "token"})
 public class TokenResponse {
 
     String authenticated;

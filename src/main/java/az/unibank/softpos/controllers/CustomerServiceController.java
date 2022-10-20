@@ -11,6 +11,8 @@ package az.unibank.softpos.controllers;
 
 import az.unibank.softpos.dto.MiniResponse;
 import az.unibank.softpos.dto.SoftResponse;
+import az.unibank.softpos.dto.CustomerResponse;
+import az.unibank.softpos.dto.TerminalDetails;
 import az.unibank.softpos.dto.requests.Company;
 import az.unibank.softpos.dto.requests.CorpCustomer;
 import az.unibank.softpos.dto.requests.Device;
@@ -34,7 +36,7 @@ public class CustomerServiceController {
 
 
     @PostMapping(value = "corporate-customer",
-            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Company> createCustomer(@Valid @RequestBody CorpCustomer corpCustomer,
                                                   @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         Company company = new Company();
@@ -52,24 +54,23 @@ public class CustomerServiceController {
     }
 
     @PostMapping(value = "corporate-customer/subcustomer",
-            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<MiniResponse> createSubCustomer(@Valid @RequestBody SubCustomer subCustomer,
-                                                          @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
-        MiniResponse miniResponse = new MiniResponse();
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CustomerResponse> createSubCustomer(@Valid @RequestBody SubCustomer subCustomer,
+                                                              @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
+        CustomerResponse subcustomerResponse = new CustomerResponse();
         try {
-            miniResponse = corporateCustomer.createSubCustomer(subCustomer, headerRequestorInitiatorRid);
-            return ResponseEntity.ok(miniResponse);
+            subcustomerResponse = corporateCustomer.createSubCustomer(subCustomer, headerRequestorInitiatorRid);
+            return ResponseEntity.ok(subcustomerResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
-            miniResponse.setCode(Constants.DECLINED_CODE_001);
-            miniResponse.setDescription(ex.getLocalizedMessage());
-            return ResponseEntity.ok(miniResponse);
+            subcustomerResponse.setResult(ex.getLocalizedMessage());
+            return ResponseEntity.ok(subcustomerResponse);
         }
 
     }
 
     @PostMapping(value = "corporate-customer/terminal",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MiniResponse> createTerminal(@Valid @RequestBody Device device,
                                                        @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         MiniResponse miniResponse = new MiniResponse();
@@ -87,7 +88,7 @@ public class CustomerServiceController {
 
 
     @PutMapping(value = "/corporate-customer/terminal/activation/id/{id}",
-            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponse> activateTerminal(@PathVariable("id") Long id,
                                                          @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid){
         SoftResponse softResponse = new SoftResponse();
@@ -107,7 +108,7 @@ public class CustomerServiceController {
 
 
     @PutMapping(value = "/corporate-customer/terminal/deactivation/id/{id}",
-            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponse> deactivateTerminal(@PathVariable("id") Long id,
                                                            @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         SoftResponse softResponse = new SoftResponse();
@@ -125,18 +126,18 @@ public class CustomerServiceController {
     }
 
     @GetMapping(value = "corporate-customer/terminal/status/id/{id}",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<MiniResponse> getStatusTerminal(@PathVariable("id") String id) {
-        MiniResponse miniResponse = new MiniResponse();
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TerminalDetails> getStatusTerminal(@PathVariable("id") Long id,
+                                                             @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
+        TerminalDetails terminalDetails = new TerminalDetails();
 
         try {
-            miniResponse = corporateCustomer.getStatusTerminal(id);
-            return ResponseEntity.ok(miniResponse);
+            terminalDetails = corporateCustomer.getStatusTerminal(id, headerRequestorInitiatorRid);
+            return ResponseEntity.ok(terminalDetails);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
-            miniResponse.setCode(Constants.DECLINED_CODE_001);
-            miniResponse.setDescription(ex.getLocalizedMessage());
-            return ResponseEntity.ok(miniResponse);
+            terminalDetails.setCode(Constants.DECLINED_CODE_001);
+            return ResponseEntity.ok(terminalDetails);
         }
 
 

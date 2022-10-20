@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2021.
- *
- *
- *  @author Sanan Garibli
- *
- */
-
 package az.unibank.softpos.dto;
 
 import lombok.Getter;
@@ -18,9 +10,10 @@ import javax.xml.bind.annotation.XmlType;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MiniResponse {
+public class TerminalDetails {
 
-    private String id;
+    private  String terminalRid;
+    private String status;
     private String code;
-    private String description;
+    private String terminalName;
 }

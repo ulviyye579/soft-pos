@@ -25,8 +25,8 @@ public class SpringFoxConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "RTP REST API",
-                "Description of REST APIs",
+                "SOFT-POS REST API",
+                "Description of SOFT-POS APIs",
                 "API 1.0.0",
                 "Terms of service",
                 new Contact("Unibank CB", "https://unibank.az", "info@unibank.az"),

@@ -18,8 +18,6 @@ import javax.xml.bind.annotation.XmlType;
 @Getter
 @Setter
 @NoArgsConstructor
-@XmlRootElement(name = "Response")
-@XmlType(propOrder = {"id", "result", "message"})
 public class SoftResponse {
 
     private String id;

@@ -15,6 +15,11 @@ public class Constants {
     public static final String DECLINED_CODE_004 = "004";
 
 
+    public static final String TYPE_RID_CORPORATE = "Corporation customer";
+    public static final String TYPE_RID_DOC = "INN";
+    public static final Long COUNTRY_CODE = 31L;
+    public static final String TITLE_MERCHANT = "MPOS ";
+
 
     public static final String LOG_STR_REQUESTED_URL = "Requested URL: ";
     public static final String LOG_STR_HEADER = "Header : ";
