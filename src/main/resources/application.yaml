@@ -4,6 +4,12 @@ spring:
   application:
     name: SOFT API
 
+  security:
+    user:
+      name: admin
+      password: 12345
+      roles: admin
+
 management:
   endpoints:
     enabled-by-default: false

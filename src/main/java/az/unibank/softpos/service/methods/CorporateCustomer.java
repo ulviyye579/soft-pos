@@ -183,13 +183,13 @@ public class CorporateCustomer {
         Accounts accounts = new Accounts();
         Account account = new Account();
         account.setExtNumber(subCustomer.getAccount());
-        account.setCcy(944l);
+        account.setCcy(CCY);
         account.setRole("Current");
         account.setAcctRoleInContract("Current");
         accounts.getAccount().add(account);
         contract.setAccounts(accounts);
 
-        contract.setMainCcy(944L);
+        contract.setMainCcy(CCY);
         admin.setContract(contract);
         specific.setAdmin(admin);
         request.setSpecific(specific);
@@ -215,10 +215,10 @@ public class CorporateCustomer {
         contract.setInstId(1L);
 
         JAXBElement<Long> JAXBBranchId = new JAXBElement(new QName(NS_CONTRACTS_ADMIN, "BranchId"), String.class,
-                21l);
+                BRANCH_ID);
         contract.setBranchId(JAXBBranchId);
         JAXBElement<Long> JAXBTypeId = new JAXBElement(new QName(NS_CONTRACTS_ADMIN, "TypeId"), String.class,
-                81L);
+                TYPE_ID);
         contract.setTypeId(JAXBTypeId);
         contract.setClientId(Long.valueOf(departmentId));
         contract.setStatus("A");
@@ -245,7 +245,7 @@ public class CorporateCustomer {
     }
 
 
-    public MiniResponse createTerminal(Device device, String headerRequestorInitiatorRid) throws Exception {
+    public MiniResponse createTerminal(Term term, String headerRequestorInitiatorRid) throws Exception {
         ReferenceId referenceId = new ReferenceId(util);
         MiniResponse miniResponse = new MiniResponse();
         String terminalRid = referenceId.getTerminalRid(headerRequestorInitiatorRid);
@@ -266,7 +266,7 @@ public class CorporateCustomer {
             JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "ExternalRid"), String.class, terminalRid);
             terminal.setExternalRid(jaxbElementExternalRid);
             terminal.setStatus("N");
-            JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Title"), String.class, device.getTerminalName());
+            JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Title"), String.class, term.getTerminalName());
             terminal.setTitle(jaxbElementTitle);
 
             BranchId branchId = new BranchId();
@@ -279,7 +279,7 @@ public class CorporateCustomer {
             terminal.setConfig(JAXConfigId);
 
             ObjectId contractObj = new ObjectId();
-            contractObj.setId(device.getContractId());
+            contractObj.setId(term.getContractId());
             JAXBElement<ObjectId> jaxbElementContract = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Contract"), ObjectId.class, contractObj);
             terminal.setContract(jaxbElementContract);
 
@@ -296,15 +296,14 @@ public class CorporateCustomer {
             terminal.setSettings(jaxbElementSettingsId);
 
             JAXBElement<String> jaxbElementTraceProfile = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "TraceProfile"), String.class,
-                    "");
-            jaxbElementTraceProfile.setValue("Warning");
+                    "Warning");
             terminal.setTraceProfile(jaxbElementTraceProfile);
 
 
             MailAddress mailAddress = new MailAddress();
             mailAddress.setCountryId(31L);
-            mailAddress.setCityTitle(device.getCity());
-            mailAddress.setStreetTitle(device.getAddress());
+            mailAddress.setCityTitle(term.getCity());
+            mailAddress.setStreetTitle(term.getAddress());
             JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Address"), MailAddress.class,
                     mailAddress);
             terminal.setAddress(jaxbElementAddress);

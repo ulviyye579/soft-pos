@@ -20,6 +20,8 @@ public class Constants {
     public static final Long COUNTRY_CODE = 31L;
     public static final String TITLE_MERCHANT = "MPOS ";
 
+    public static final Long CCY = 944L;
+
 
     public static final String LOG_STR_REQUESTED_URL = "Requested URL: ";
     public static final String LOG_STR_HEADER = "Header : ";
@@ -35,6 +37,7 @@ public class Constants {
     public static final String INITIATOR_RID = "initiatorRid";
 
     public static final Long BRANCH_ID = 21L;
+    public static final Long TYPE_ID =81L;
     public static final String RTP_URL = "RTP_URL";
     public static final String CONTRACT_CCY = "ContractCcy";
     public static final String CONTRACT_AVAIL_BALANCE = "ContractAvailBalance";

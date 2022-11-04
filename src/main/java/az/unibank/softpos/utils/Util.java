@@ -32,6 +32,18 @@ public class Util {
     @Value("${application.initiatorRidDefault}")
     private String initiatorRidDefault;
 
+    @Value("${request.user}")
+    private String user;
+    @Value("${request.timeout}")
+    private Long timeout;
+
+    @Value("${request.header}")
+    private String header;
+    @Value("${request.prefix}")
+    private String prefix;
+    @Value("${request.password}")
+    private String requestPassword;
+
 
     public static String maskPan(String data) {
         return data.replaceAll("(Pan=\"\\d{6})\\d*(\\d{4})[Pan=\"]", "$1******$2\"");

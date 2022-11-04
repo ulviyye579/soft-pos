@@ -15,7 +15,7 @@ import az.unibank.softpos.dto.CustomerResponse;
 import az.unibank.softpos.dto.TerminalDetails;
 import az.unibank.softpos.dto.requests.Company;
 import az.unibank.softpos.dto.requests.CorpCustomer;
-import az.unibank.softpos.dto.requests.Device;
+import az.unibank.softpos.dto.requests.Term;
 import az.unibank.softpos.dto.requests.SubCustomer;
 import az.unibank.softpos.service.methods.CorporateCustomer;
 import az.unibank.softpos.utils.Constants;
@@ -71,12 +71,12 @@ public class CustomerServiceController {
 
     @PostMapping(value = "corporate-customer/terminal",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MiniResponse> createTerminal(@Valid @RequestBody Device device,
+    public ResponseEntity<MiniResponse> createTerminal(@Valid @RequestBody Term term,
                                                        @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         MiniResponse miniResponse = new MiniResponse();
 
         try {
-            miniResponse =  corporateCustomer.createTerminal(device, headerRequestorInitiatorRid);
+            miniResponse =  corporateCustomer.createTerminal(term, headerRequestorInitiatorRid);
             return ResponseEntity.ok(miniResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
@@ -135,12 +135,11 @@ public class CustomerServiceController {
             terminalDetails = corporateCustomer.getStatusTerminal(id, headerRequestorInitiatorRid);
             return ResponseEntity.ok(terminalDetails);
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error(ex.getLocalizedMessage());
             terminalDetails.setCode(Constants.DECLINED_CODE_001);
             return ResponseEntity.ok(terminalDetails);
         }
-
-
     }
 
 }
