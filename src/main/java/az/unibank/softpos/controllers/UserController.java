@@ -28,22 +28,26 @@ public class UserController {
     @PostMapping("user")
     public ResponseEntity<User> login(@RequestParam("user") String username, @RequestParam("password") String password) throws Exception {
 
-        if (!util.getUser().equals(username)) {
-            return ResponseEntity.status(400).build();
+            if (!util.getUser().equals(username)) {
+                return ResponseEntity.status(400).build();
+            }
+        try {
+            String token = getJWTToken(username, password);
+            User user = new User();
+            user.setUser(username);
+            user.setToken(token);
+            return ResponseEntity.ok(user);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getLocalizedMessage());
         }
-        String token = getJWTToken(username, password);
-        User user = new User();
-        user.setUser(username);
-        user.setToken(token);
-        return ResponseEntity.ok(user);
-
+        return null;
     }
 
     private String getJWTToken(String username, String password) throws Exception {
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("ROLE_USER");
         try {
-
             String token = Jwts
                     .builder()
                     .setId("soft-pos")
