@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import az.unibank.softpos.dto.User;
 import az.unibank.softpos.utils.Util;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,8 @@ import io.jsonwebtoken.Jwts;
 
 @RestController
 @Slf4j
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserController {
     private final Util util;
 
