@@ -13,8 +13,8 @@ springfox:
     swagger-ui:
       enabled: true
 request:
-  user: pos-creator
   header: Authorization
   prefix: SOFT_POS_
+  timeout: 86400000
+  user: pos-creator
   password: NBpCnAHDj6IrUgEtxDW9xhwkQuxxF34R
-  timeout: 31536000

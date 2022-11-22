@@ -12,11 +12,8 @@ package az.unibank.softpos.controllers;
 import az.unibank.softpos.dto.MiniResponse;
 import az.unibank.softpos.dto.SoftResponse;
 import az.unibank.softpos.dto.CustomerResponse;
-import az.unibank.softpos.dto.TerminalDetails;
-import az.unibank.softpos.dto.requests.Company;
-import az.unibank.softpos.dto.requests.CorpCustomer;
-import az.unibank.softpos.dto.requests.Term;
-import az.unibank.softpos.dto.requests.SubCustomer;
+import az.unibank.softpos.dto.TermStatusResponse;
+import az.unibank.softpos.dto.requests.*;
 import az.unibank.softpos.service.methods.CorporateCustomer;
 import az.unibank.softpos.utils.Constants;
 import lombok.RequiredArgsConstructor;
@@ -71,25 +68,24 @@ public class CustomerServiceController {
 
     @PostMapping(value = "corporate-customer/terminal",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MiniResponse> createTerminal(@Valid @RequestBody Term term,
+    public ResponseEntity<TerminalResponse> createTerminal(@Valid @RequestBody Term term,
                                                        @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
-        MiniResponse miniResponse = new MiniResponse();
-
+        TerminalResponse terminalResponse = new TerminalResponse();
         try {
-            miniResponse =  corporateCustomer.createTerminal(term, headerRequestorInitiatorRid);
-            return ResponseEntity.ok(miniResponse);
+            terminalResponse =  corporateCustomer.createTerminal(term, headerRequestorInitiatorRid);
+            return ResponseEntity.ok(terminalResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
-            miniResponse.setCode(Constants.DECLINED_CODE_001);
-            miniResponse.setDescription(ex.getLocalizedMessage());
-            return ResponseEntity.ok(miniResponse);
+            terminalResponse.setCode(Constants.DECLINED_CODE_001);
+            terminalResponse.setDescription(ex.getLocalizedMessage());
+            return ResponseEntity.ok(terminalResponse);
         }
     }
 
 
     @PutMapping(value = "/corporate-customer/terminal/activation/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SoftResponse> activateTerminal(@PathVariable("id") Long id,
+    public ResponseEntity<SoftResponse> activateTerminal(@PathVariable("id") String id,
                                                          @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid){
         SoftResponse softResponse = new SoftResponse();
 
@@ -127,9 +123,9 @@ public class CustomerServiceController {
 
     @GetMapping(value = "corporate-customer/terminal/status/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TerminalDetails> getStatusTerminal(@PathVariable("id") Long id,
-                                                             @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
-        TerminalDetails terminalDetails = new TerminalDetails();
+    public ResponseEntity<TermStatusResponse> getStatusTerminal(@PathVariable("id") Long id,
+                                                                @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
+        TermStatusResponse terminalDetails = new TermStatusResponse();
 
         try {
             terminalDetails = corporateCustomer.getStatusTerminal(id, headerRequestorInitiatorRid);

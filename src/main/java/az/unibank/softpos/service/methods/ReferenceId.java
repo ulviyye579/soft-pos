@@ -79,7 +79,7 @@ public class ReferenceId {
         String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
         Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
-            Long id = Long.valueOf(response.getUserAttrs().getParamValue().get(0).getVal().getValue().substring(2,8)) +1;
+            Long id = Long.parseLong(response.getUserAttrs().getParamValue().get(0).getVal().getValue().substring(2,8)) +1;
             termRid = "SP" + id;
         }
         return termRid;

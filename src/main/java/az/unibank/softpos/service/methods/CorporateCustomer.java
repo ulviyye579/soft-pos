@@ -4,7 +4,7 @@ package az.unibank.softpos.service.methods;
 import az.unibank.softpos.dto.MiniResponse;
 import az.unibank.softpos.dto.SoftResponse;
 import az.unibank.softpos.dto.CustomerResponse;
-import az.unibank.softpos.dto.TerminalDetails;
+import az.unibank.softpos.dto.TermStatusResponse;
 import az.unibank.softpos.dto.requests.*;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
@@ -175,7 +175,7 @@ public class CorporateCustomer {
         Contract contract = new Contract();
         JAXBElement<Long> jaxbElementBranchId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "BranchId"), Long.class, 21L);
         contract.setBranchId(jaxbElementBranchId);
-        JAXBElement<Long> jaxbElementTypeId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "TypeId"), Long.class, 344l);
+        JAXBElement<Long> jaxbElementTypeId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "TypeId"), Long.class, 344L);
         contract.setTypeId(jaxbElementTypeId);
         contract.setClientId(Long.valueOf(departmentId));
         contract.setStatus("A");
@@ -245,11 +245,12 @@ public class CorporateCustomer {
     }
 
 
-    public MiniResponse createTerminal(Term term, String headerRequestorInitiatorRid) throws Exception {
+    public TerminalResponse createTerminal(Term term, String headerRequestorInitiatorRid) throws Exception {
         ReferenceId referenceId = new ReferenceId(util);
-        MiniResponse miniResponse = new MiniResponse();
+        TerminalResponse terminalResponse = new TerminalResponse();
+        String customerId = term.getClientID();
         String terminalRid = referenceId.getTerminalRid(headerRequestorInitiatorRid);
-        if (terminalRid != null) {
+        if (terminalRid != null || customerId != null) {
             this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
             TranInvoke tranInvoke = new TranInvoke();
             Request request = new Request();
@@ -263,7 +264,7 @@ public class CorporateCustomer {
             Terminal terminal = new Terminal();
             terminal.setName(terminalRid);
             terminal.setTermType("Pos");
-            JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "ExternalRid"), String.class, terminalRid);
+            JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "ExternalRid"), String.class, customerId );
             terminal.setExternalRid(jaxbElementExternalRid);
             terminal.setStatus("N");
             JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Title"), String.class, term.getTerminalName());
@@ -314,16 +315,17 @@ public class CorporateCustomer {
             StringWriter sw = new StringWriter();
             String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
             Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
-            miniResponse.setId(response.getSpecific().getAdmin().getTerminal().getName());
-            miniResponse.setCode(SUCCESS_CODE_000);
-            miniResponse.setDescription(APPROVED_RESULT);
-            return miniResponse;
+            terminalResponse.setTermRid(response.getSpecific().getAdmin().getTerminal().getName());
+            terminalResponse.setId(String.valueOf(response.getSpecific().getAdmin().getTerminal().getId()));
+            terminalResponse.setCode(SUCCESS_CODE_000);
+            terminalResponse.setDescription(APPROVED_RESULT);
+            return terminalResponse;
         }
-        return miniResponse;
+        return terminalResponse;
     }
 
 
-    public SoftResponse activateStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
+    public SoftResponse activateStatusTerminal(String id, String headerRequestorInitiatorRid) throws Exception {
         SoftResponse softResponse = new SoftResponse();
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();
@@ -335,7 +337,7 @@ public class CorporateCustomer {
         request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
         admin.setObjectMustExist(true);
         Terminal terminal = new Terminal();
-        terminal.setId(id);
+        terminal.setId(Long.valueOf(id));
         terminal.setStatus("A");
 
         admin.setTerminal(terminal);
@@ -394,8 +396,8 @@ public class CorporateCustomer {
         return softResponse;
     }
 
-    public TerminalDetails getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
-        TerminalDetails terminalDetails = new TerminalDetails();
+    public TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
+        TermStatusResponse terminalDetails = new TermStatusResponse();
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();

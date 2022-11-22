@@ -1,12 +1,4 @@
-/*
- * Copyright (c) 2021.
- *
- *
- *  @author Sanan Garibli
- *
- */
-
-package az.unibank.softpos.dto;
+package az.unibank.softpos.dto.requests;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,9 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MiniResponse {
 
+public class TerminalResponse {
+
+    private String termRid;
     private String id;
-    private String code;
+    private String terminalName;
     private String description;
+    private String code;
 }

@@ -14,10 +14,11 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * @author Sanan Garibli
+ * @author Ulviyya Musayeva
  */
 
 @Slf4j
@@ -34,6 +35,7 @@ public class Util {
 
     @Value("${request.user}")
     private String user;
+
     @Value("${request.timeout}")
     private Long timeout;
 
