@@ -1,5 +1,6 @@
 package az.unibank.softpos.controllers;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.stream.Collectors;
 import az.unibank.softpos.dto.User;
 import az.unibank.softpos.utils.Util;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +49,11 @@ public class UserController {
         return null;
     }
 
+    private Key getSigningKey (String password) {
+        byte[] keyBytes = password.getBytes();
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
     private String getJWTToken(String username, String password) throws Exception {
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("ROLE_USER");
@@ -60,7 +68,7 @@ public class UserController {
                                     .collect(Collectors.toList()))
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .setExpiration(new Date(System.currentTimeMillis() + util.getTimeout()))
-                    .signWith(SignatureAlgorithm.HS256, password.getBytes()).compact();
+                    .signWith(getSigningKey(password), SignatureAlgorithm.HS256).compact();
 
             return "SOFT_POS_" + token;
         } catch (Exception ex) {
