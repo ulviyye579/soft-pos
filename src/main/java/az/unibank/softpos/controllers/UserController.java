@@ -22,17 +22,17 @@ import io.jsonwebtoken.Jwts;
 
 @RestController
 @Slf4j
-//@RequiredArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+
 public class UserController {
     private final Util util;
 
     @PostMapping("user")
     public ResponseEntity<User> login(@RequestParam("user") String username, @RequestParam("password") String password) throws Exception {
 
-            if (!util.getUser().equals(username)) {
-                return ResponseEntity.status(400).build();
-            }
+        if (!util.getUser().equals(username)) {
+            return ResponseEntity.status(400).build();
+        }
         try {
             String token = getJWTToken(username, password);
             User user = new User();
@@ -60,8 +60,7 @@ public class UserController {
                                     .collect(Collectors.toList()))
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .setExpiration(new Date(System.currentTimeMillis() + util.getTimeout()))
-                    .signWith(SignatureAlgorithm.HS512,
-                            password.getBytes()).compact();
+                    .signWith(SignatureAlgorithm.HS256, password.getBytes()).compact();
 
             return "SOFT_POS_" + token;
         } catch (Exception ex) {
