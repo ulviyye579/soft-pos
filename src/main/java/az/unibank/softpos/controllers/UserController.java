@@ -81,9 +81,7 @@ public class UserController {
         return null;
     }
 
-
-    @GetMapping(value = "user/checkToken", produces = MediaType.APPLICATION_JSON_VALUE)
-
+    @GetMapping(value = "user/check/token", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserToken> checkToken(HttpServletRequest request) {
         UserToken userToken = new UserToken();
         JWTAuthorizationFilter jwtAuthorizationFilter = new JWTAuthorizationFilter(util);
