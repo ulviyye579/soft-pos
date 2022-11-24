@@ -1,27 +1,29 @@
 package az.unibank.softpos.controllers;
 
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import az.unibank.softpos.dto.User;
+import az.unibank.softpos.dto.UserToken;
+import az.unibank.softpos.security.JWTAuthorizationFilter;
 import az.unibank.softpos.utils.Util;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.jsonwebtoken.Jwts;
+import javax.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -49,7 +51,7 @@ public class UserController {
         return null;
     }
 
-    private Key getSigningKey (String password) {
+    private Key getSigningKey(String password) {
         byte[] keyBytes = password.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -77,5 +79,18 @@ public class UserController {
         }
 
         return null;
+    }
+
+
+    @GetMapping(value = "user/checkToken", produces = MediaType.APPLICATION_JSON_VALUE)
+
+    public ResponseEntity<UserToken> checkToken(HttpServletRequest request) {
+        UserToken userToken = new UserToken();
+        JWTAuthorizationFilter jwtAuthorizationFilter = new JWTAuthorizationFilter(util);
+        Claims claims = jwtAuthorizationFilter.validateToken(request);
+        if (claims.get("authorities") != null) {
+            userToken.setResult(true);
+        }
+        return ResponseEntity.ok(userToken);
     }
 }

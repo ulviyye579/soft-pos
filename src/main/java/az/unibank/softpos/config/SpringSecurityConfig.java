@@ -27,7 +27,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             "/user",
             "/actuator/health",
             "/actuator/health/**",
-            "/actuator/prometheus"
+            "/actuator/prometheus",
+            "/checkToken"
     };
 
     @Override

@@ -27,8 +27,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 private final Util util;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        log.info(util.getHeader() + ", " + util.getPrefix() + ", " + util.getRequestPassword());
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
             if (checkJWTToken(request, response)) {
                 Claims claims = validateToken(request);
@@ -48,7 +47,7 @@ private final Util util;
         }
     }
 
-    private Claims validateToken(HttpServletRequest request) {
+    public Claims validateToken(HttpServletRequest request) {
         String jwtToken = request.getHeader(util.getHeader()).replace(util.getPrefix(), "");
         return Jwts.parser().setSigningKey(util.getRequestPassword().getBytes()).parseClaimsJws(jwtToken).getBody();
     }
