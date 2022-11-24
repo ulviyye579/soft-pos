@@ -14,10 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
@@ -28,11 +25,11 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-
+@RequestMapping("/user")
 public class UserController {
     private final Util util;
 
-    @PostMapping("user")
+    @PostMapping
     public ResponseEntity<User> login(@RequestParam("user") String username, @RequestParam("password") String password) throws Exception {
 
         if (!util.getUser().equals(username)) {
@@ -81,7 +78,7 @@ public class UserController {
         return null;
     }
 
-    @GetMapping(value = "user/check/token", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/check/token", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserToken> checkToken(HttpServletRequest request) {
         UserToken userToken = new UserToken();
         JWTAuthorizationFilter jwtAuthorizationFilter = new JWTAuthorizationFilter(util);
