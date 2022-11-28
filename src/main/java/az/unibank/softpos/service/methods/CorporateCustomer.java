@@ -8,8 +8,8 @@ import az.unibank.softpos.dto.TermStatusResponse;
 import az.unibank.softpos.dto.requests.*;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
-import com.tranzaxis.schemas.acquiring_admin.BranchId;
-import com.tranzaxis.schemas.acquiring_admin.Terminal;
+import com.sun.xml.internal.ws.policy.PolicyMapKey;
+import com.tranzaxis.schemas.acquiring_admin.*;
 import com.tranzaxis.schemas.common_types.MailAddress;
 import com.tranzaxis.schemas.common_types.ObjectId;
 import com.tranzaxis.schemas.contracts_admin.Account;
@@ -246,14 +246,26 @@ public class CorporateCustomer {
 
 
     public TerminalResponse createTerminal(Term term, String headerRequestorInitiatorRid) throws Exception {
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        TranInvoke tranInvoke = new TranInvoke();
+        Request request = new Request();
+        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        request.setKind("Udt");
+        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        request.setUdtType("KeyGeneration");
+        tranInvoke.setRequest(request);
+        StringWriter swriter = new StringWriter();
+        String xmlBody = init.jaxbProcessor.toXml(swriter, tranInvoke);
+        Response responseKeyGeneration = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        String keyId = responseKeyGeneration.getUserAttrs().getParamValue().get(0).getVal().getValue();
+        String keyVal = responseKeyGeneration.getUserAttrs().getParamValue().get(1).getVal().getValue();
+        log.info("keyId : " + keyId);
+        log.info("keyVal : " + keyVal);
         ReferenceId referenceId = new ReferenceId(util);
         TerminalResponse terminalResponse = new TerminalResponse();
         String customerId = term.getClientID();
         String terminalRid = referenceId.getTerminalRid(headerRequestorInitiatorRid);
         if (terminalRid != null || customerId != null) {
-            this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-            TranInvoke tranInvoke = new TranInvoke();
-            Request request = new Request();
             Request.Specific specific = new Request.Specific();
             Request.Specific.Admin admin = new Request.Specific.Admin();
             request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
@@ -264,7 +276,7 @@ public class CorporateCustomer {
             Terminal terminal = new Terminal();
             terminal.setName(terminalRid);
             terminal.setTermType("Pos");
-            JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "ExternalRid"), String.class, customerId );
+            JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "ExternalRid"), String.class, customerId);
             terminal.setExternalRid(jaxbElementExternalRid);
             terminal.setStatus("N");
             JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Title"), String.class, term.getTerminalName());
@@ -301,20 +313,51 @@ public class CorporateCustomer {
             terminal.setTraceProfile(jaxbElementTraceProfile);
 
 
+            Terminal.Keys keys =new Terminal.Keys();
+
+
+//            keys.getPmk().getValue().setRoot(141L);
+//            keys.getPmk().getValue().setValue(keyVal);
+//            ObjectId obj3 = new ObjectId();
+//            obj3.setId(Long.valueOf(keyId));
+//            keys.getPmk().getValue().setZmk(obj3);
+
+            DesKey desKey = new DesKey();
+            DesKeyWithKek desKeyWithKek = new DesKeyWithKek();
+//            desKey.setRoot(141L);
+//            desKey.setValue(keyVal);
+//            ObjectId obj3 = new ObjectId();
+//            obj3.setId(Long.valueOf(keyId));
+//            desKey.setZmk(obj3);
+            desKey.setId(Long.valueOf(keyId));
+            desKeyWithKek.setId(Long.valueOf(keyId));
+
+            JAXBElement<DesKey> desKeyJAXBElement1 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Pmk"), DesKey.class , desKey);
+            JAXBElement<DesKeyWithKek> desKeyJAXBElement2 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Mmk"), DesKeyWithKek.class , desKeyWithKek);
+            JAXBElement<DesKeyWithKek> desKeyJAXBElement3 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Emk"), DesKeyWithKek.class , desKeyWithKek);
+
+            keys.setPmk(desKeyJAXBElement1);
+            keys.setMmk(desKeyJAXBElement2);
+            keys.setEmk(desKeyJAXBElement3);
+            terminal.setKeys(keys);
+
+
             MailAddress mailAddress = new MailAddress();
             mailAddress.setCountryId(31L);
             mailAddress.setCityTitle(term.getCity());
             mailAddress.setStreetTitle(term.getAddress());
             JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Address"), MailAddress.class,
                     mailAddress);
+
+
             terminal.setAddress(jaxbElementAddress);
             admin.setTerminal(terminal);
             specific.setAdmin(admin);
             request.setSpecific(specific);
             tranInvoke.setRequest(request);
-            StringWriter sw = new StringWriter();
-            String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
-            Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+            StringWriter sw1 = new StringWriter();
+            String xml = init.jaxbProcessor.toXml(sw1, tranInvoke);
+            Response response = init.callSOAP(xml, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
             terminalResponse.setTermRid(response.getSpecific().getAdmin().getTerminal().getName());
             terminalResponse.setId(String.valueOf(response.getSpecific().getAdmin().getTerminal().getId()));
             terminalResponse.setCode(SUCCESS_CODE_000);
@@ -440,6 +483,28 @@ public class CorporateCustomer {
         }
 
         return terminalDetails;
+    }
+
+    public MiniResponse generateKey (Long id, String headerRequestorInitiatorRid) throws Exception {
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        MiniResponse miniResponse = new MiniResponse();
+        if (id.equals(1L)) {
+        TranInvoke tranInvoke = new TranInvoke();
+        Request request = new Request();
+        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        request.setKind("Udt");
+        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        request.setUdtType("KeyGeneration");
+        tranInvoke.setRequest(request);
+        StringWriter sw = new StringWriter();
+        String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
+        Response responseKeyGeneration = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+       String key = responseKeyGeneration.getUserAttrs().getParamValue().get(1).getVal().getValue();
+        log.info("key : "+ key);
+        miniResponse.setDescription(key);
+        miniResponse.setCode(APPROVED_RESULT);
+        return miniResponse;}
+        return miniResponse;
     }
 
 }

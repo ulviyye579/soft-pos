@@ -138,4 +138,21 @@ public class CustomerServiceController {
         }
     }
 
+    @GetMapping(value = "corporate-customer/keyGeneration/id/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MiniResponse> generateKey(@PathVariable("id") Long id,
+                                                                @RequestHeader (value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
+        MiniResponse miniResponse = new MiniResponse();
+
+        try {
+            miniResponse = corporateCustomer.generateKey(id, headerRequestorInitiatorRid);
+            return ResponseEntity.ok(miniResponse);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getLocalizedMessage());
+            miniResponse.setCode(Constants.DECLINED_CODE_001);
+            return ResponseEntity.ok(miniResponse);
+        }
+    }
+
 }
