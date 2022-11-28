@@ -1,15 +1,17 @@
 package az.unibank.softpos.service.methods;
 
 
+import az.unibank.softpos.dto.CustomerResponse;
 import az.unibank.softpos.dto.MiniResponse;
 import az.unibank.softpos.dto.SoftResponse;
-import az.unibank.softpos.dto.CustomerResponse;
 import az.unibank.softpos.dto.TermStatusResponse;
 import az.unibank.softpos.dto.requests.*;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
-import com.sun.xml.internal.ws.policy.PolicyMapKey;
-import com.tranzaxis.schemas.acquiring_admin.*;
+import com.tranzaxis.schemas.acquiring_admin.BranchId;
+import com.tranzaxis.schemas.acquiring_admin.DesKey;
+import com.tranzaxis.schemas.acquiring_admin.DesKeyWithKek;
+import com.tranzaxis.schemas.acquiring_admin.Terminal;
 import com.tranzaxis.schemas.common_types.MailAddress;
 import com.tranzaxis.schemas.common_types.ObjectId;
 import com.tranzaxis.schemas.contracts_admin.Account;
