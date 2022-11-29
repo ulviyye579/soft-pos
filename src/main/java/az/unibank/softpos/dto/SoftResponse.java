@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 public class SoftResponse {
 
     private String id;
-    private String result;
+    private Boolean result;
     private String message;
 }
 

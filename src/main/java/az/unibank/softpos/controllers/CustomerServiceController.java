@@ -94,7 +94,7 @@ public class CustomerServiceController {
             return ResponseEntity.ok(softResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
-            softResponse.setResult(String.valueOf(Boolean.FALSE));
+            softResponse.setResult(Boolean.FALSE);
             softResponse.setId(Constants.DECLINED_CODE_001);
             softResponse.setMessage(ex.getLocalizedMessage());
             return ResponseEntity.ok(softResponse);
@@ -114,7 +114,7 @@ public class CustomerServiceController {
             return ResponseEntity.ok(softResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
-            softResponse.setResult(String.valueOf(Boolean.FALSE));
+            softResponse.setResult(Boolean.FALSE);
             softResponse.setId(Constants.DECLINED_CODE_001);
             softResponse.setMessage(ex.getLocalizedMessage());
             return ResponseEntity.ok(softResponse);

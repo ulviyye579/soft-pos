@@ -382,11 +382,11 @@ public class CorporateCustomer {
         Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
             softResponse.setId(Constants.SUCCESS_CODE_000);
-            softResponse.setResult(String.valueOf(Boolean.TRUE));
+            softResponse.setResult(Boolean.TRUE);
             softResponse.setMessage(Constants.APPROVED_RESULT);
         } else {
             softResponse.setId(Constants.DECLINED_CODE_001);
-            softResponse.setResult(String.valueOf(Boolean.FALSE));
+            softResponse.setResult(Boolean.FALSE);
             softResponse.setMessage("Failed");
 
         }
@@ -418,11 +418,11 @@ public class CorporateCustomer {
         Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
             softResponse.setId(Constants.SUCCESS_CODE_000);
-            softResponse.setResult(String.valueOf(Boolean.TRUE));
+            softResponse.setResult(Boolean.TRUE);
             softResponse.setMessage(Constants.APPROVED_RESULT);
         } else {
             softResponse.setId(Constants.DECLINED_CODE_001);
-            softResponse.setResult(String.valueOf(Boolean.FALSE));
+            softResponse.setResult(Boolean.FALSE);
             softResponse.setMessage("Failed");
 
         }

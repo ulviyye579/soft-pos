@@ -5,16 +5,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,11 +39,6 @@ public class Util {
     @Value("${request.password}")
     private String requestPassword;
 
-
-    public static String maskPan(String data) {
-        return data.replaceAll("(Pan=\"\\d{6})\\d*(\\d{4})[Pan=\"]", "$1******$2\"");
-
-    }
 
     public static String getDateTime() {
         Date date = new Date();

@@ -1,4 +1,4 @@
-package az.unibank.softpos.exceptions;
+package com.tranzaxis.schemas.digitized_card.exceptions;
 
 
 public class InvalidValueException extends Exception {
