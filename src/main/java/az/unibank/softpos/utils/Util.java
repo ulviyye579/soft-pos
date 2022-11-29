@@ -52,22 +52,12 @@ public class Util {
 
     }
 
-
     public static String getDateTime() {
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         return formatter.format(date);
     }
 
-
-    public static String toXml(Writer writer, Object jaxbAnnotedObj, JAXBContext jaxbContext) throws JAXBException {
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        if (log.isTraceEnabled()) {
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        }
-        marshaller.marshal(jaxbAnnotedObj, writer);
-        return writer.toString();
-    }
 
     public Map<String, String> getTxParams(String httpHeaders) {
         Map<String, String> txParamsHashMap = new HashMap<>();

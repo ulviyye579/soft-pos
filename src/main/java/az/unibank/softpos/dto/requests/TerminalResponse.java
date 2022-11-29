@@ -15,4 +15,5 @@ public class TerminalResponse {
     private String terminalName;
     private String description;
     private String code;
+    private String key;
 }

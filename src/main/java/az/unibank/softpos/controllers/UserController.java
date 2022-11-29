@@ -2,7 +2,6 @@ package az.unibank.softpos.controllers;
 
 import az.unibank.softpos.dto.User;
 import az.unibank.softpos.dto.UserToken;
-import az.unibank.softpos.security.JWTAuthorizationFilter;
 import az.unibank.softpos.utils.Util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -81,11 +80,12 @@ public class UserController {
     @GetMapping(value = "/check/token", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserToken> checkToken(HttpServletRequest request) {
         UserToken userToken = new UserToken();
-        JWTAuthorizationFilter jwtAuthorizationFilter = new JWTAuthorizationFilter(util);
-        Claims claims = jwtAuthorizationFilter.validateToken(request);
+        String jwtToken = request.getHeader(util.getHeader()).replace(util.getPrefix(), "");
+        Claims claims = Jwts.parser().setSigningKey(util.getRequestPassword().getBytes()).parseClaimsJws(jwtToken).getBody();
         if (claims.get("authorities") != null) {
             userToken.setResult(true);
         }
         return ResponseEntity.ok(userToken);
     }
+
 }
