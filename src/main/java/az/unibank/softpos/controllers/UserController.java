@@ -1,5 +1,6 @@
 package az.unibank.softpos.controllers;
 
+import az.unibank.softpos.dto.JwtToken;
 import az.unibank.softpos.dto.User;
 import az.unibank.softpos.dto.UserToken;
 import az.unibank.softpos.utils.Util;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,15 +79,41 @@ public class UserController {
         return null;
     }
 
-    @GetMapping(value = "/check/token", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserToken> checkToken(HttpServletRequest request) {
+//    @GetMapping(value = "/check/token", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<UserToken> checkToken(HttpServletRequest request) {
+//        UserToken userToken = new UserToken();
+//       try {
+//           String jwtToken = request.getHeader(util.getHeader()).replace(util.getPrefix(), "");
+//           Claims claims = Jwts.parser().setSigningKey(util.getRequestPassword().getBytes()).parseClaimsJws(jwtToken).getBody();
+//           if (claims.get("authorities") != null) {
+//               userToken.setResult(true);
+//           }
+//           return ResponseEntity.ok(userToken);
+//       }
+//       catch (Exception exception) {
+//           userToken.setResult(false);
+//           return ResponseEntity.ok(userToken);
+//       }
+//    }
+
+    @GetMapping(value = "/check/token/{token}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserToken> checkTokenV2(@PathVariable String token) {
         UserToken userToken = new UserToken();
-        String jwtToken = request.getHeader(util.getHeader()).replace(util.getPrefix(), "");
-        Claims claims = Jwts.parser().setSigningKey(util.getRequestPassword().getBytes()).parseClaimsJws(jwtToken).getBody();
-        if (claims.get("authorities") != null) {
-            userToken.setResult(true);
+        try {
+            String[] tokenParts = token.split("\\.");
+            String jsonString = new String(Base64.getDecoder().decode(tokenParts[1].getBytes()));
+            JwtToken jwtToken = util.unmarshal(jsonString);
+            log.trace(jwtToken.toString());
+            Long expiry = Long.valueOf(jwtToken.getExp()) * 1000L;
+
+            long dateNow = new Date().getTime();
+            if (expiry > dateNow)
+                userToken.setResult(true);
+            return ResponseEntity.ok(userToken);
+        } catch (Exception exception) {
+            userToken.setResult(false);
+            return ResponseEntity.ok(userToken);
         }
-        return ResponseEntity.ok(userToken);
     }
 
 }

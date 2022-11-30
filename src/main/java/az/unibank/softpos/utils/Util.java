@@ -1,5 +1,7 @@
 package az.unibank.softpos.utils;
 
+import az.unibank.softpos.dto.JwtToken;
+import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -61,4 +63,9 @@ public class Util {
         return txParamsHashMap;
     }
 
+public JwtToken unmarshal(String jsonString){
+    Gson g = new Gson();
+    JwtToken jwtToken = g.fromJson(jsonString, JwtToken.class);
+    return jwtToken;
+}
 }

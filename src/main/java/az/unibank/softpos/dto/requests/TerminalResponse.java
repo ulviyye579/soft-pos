@@ -15,5 +15,8 @@ public class TerminalResponse {
     private String terminalName;
     private String description;
     private String code;
-    private String key;
+    private String keyValue;
+    private String keyType;
+    private String kcv;  //    key checkvalue
+
 }

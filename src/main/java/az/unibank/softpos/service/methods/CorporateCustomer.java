@@ -351,7 +351,9 @@ public class CorporateCustomer {
             terminalResponse.setId(String.valueOf(response.getSpecific().getAdmin().getTerminal().getId()));
             terminalResponse.setCode(SUCCESS_CODE_000);
             terminalResponse.setDescription(APPROVED_RESULT);
-            terminalResponse.setKey(keyVal);
+            terminalResponse.setKeyType("TMK");
+            terminalResponse.setKcv("");
+            terminalResponse.setKeyValue(keyVal);
             return terminalResponse;
         }
         return terminalResponse;
