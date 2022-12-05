@@ -1,8 +1,11 @@
-package az.unibank.softpos.dto.requests;
+package az.unibank.softpos.dto.responses;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -16,7 +19,6 @@ public class TerminalResponse {
     private String description;
     private String code;
     private String keyValue;
-    private String keyType;
     private String kcv;  //    key checkvalue
 
 }

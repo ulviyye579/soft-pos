@@ -1,10 +1,9 @@
 package az.unibank.softpos.controllers;
 
 import az.unibank.softpos.dto.JwtToken;
-import az.unibank.softpos.dto.User;
-import az.unibank.softpos.dto.UserToken;
+import az.unibank.softpos.dto.responses.User;
+import az.unibank.softpos.dto.responses.UserToken;
 import az.unibank.softpos.utils.Util;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -16,7 +15,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;

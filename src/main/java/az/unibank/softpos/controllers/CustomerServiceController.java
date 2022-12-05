@@ -9,11 +9,8 @@
 package az.unibank.softpos.controllers;
 
 
-import az.unibank.softpos.dto.MiniResponse;
-import az.unibank.softpos.dto.SoftResponse;
-import az.unibank.softpos.dto.CustomerResponse;
-import az.unibank.softpos.dto.TermStatusResponse;
 import az.unibank.softpos.dto.requests.*;
+import az.unibank.softpos.dto.responses.*;
 import az.unibank.softpos.service.methods.CorporateCustomer;
 import az.unibank.softpos.utils.Constants;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +73,6 @@ public class CustomerServiceController {
             return ResponseEntity.ok(terminalResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
-            terminalResponse.setCode(Constants.DECLINED_CODE_001);
             terminalResponse.setDescription(ex.getLocalizedMessage());
             return ResponseEntity.ok(terminalResponse);
         }

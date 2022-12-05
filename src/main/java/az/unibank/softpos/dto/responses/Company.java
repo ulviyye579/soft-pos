@@ -1,4 +1,4 @@
-package az.unibank.softpos.dto.requests;
+package az.unibank.softpos.dto.responses;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

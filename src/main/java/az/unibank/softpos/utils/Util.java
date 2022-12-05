@@ -65,7 +65,6 @@ public class Util {
 
 public JwtToken unmarshal(String jsonString){
     Gson g = new Gson();
-    JwtToken jwtToken = g.fromJson(jsonString, JwtToken.class);
-    return jwtToken;
+    return g.fromJson(jsonString, JwtToken.class);
 }
 }

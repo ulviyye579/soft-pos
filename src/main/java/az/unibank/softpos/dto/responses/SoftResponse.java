@@ -1,4 +1,4 @@
-package az.unibank.softpos.dto;
+package az.unibank.softpos.dto.responses;
 /*
  * Copyright (c) 2021.
  *

@@ -1,10 +1,8 @@
 package az.unibank.softpos.service.methods;
 
 
-import az.unibank.softpos.dto.CustomerResponse;
-import az.unibank.softpos.dto.SoftResponse;
-import az.unibank.softpos.dto.TermStatusResponse;
 import az.unibank.softpos.dto.requests.*;
+import az.unibank.softpos.dto.responses.*;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.acquiring_admin.BranchId;
@@ -27,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 import static az.unibank.softpos.utils.Constants.*;
@@ -214,12 +213,12 @@ public class CorporateCustomer {
         Contract contract = new Contract();
         contract.setInstId(1L);
 
-        JAXBElement<Long> JAXBBranchId = new JAXBElement(new QName(NS_CONTRACTS_ADMIN, "BranchId"), String.class,
+        JAXBElement<Long> jaxbBranchId = new JAXBElement(new QName(NS_CONTRACTS_ADMIN, "BranchId"), String.class,
                 BRANCH_ID);
-        contract.setBranchId(JAXBBranchId);
-        JAXBElement<Long> JAXBTypeId = new JAXBElement(new QName(NS_CONTRACTS_ADMIN, "TypeId"), String.class,
+        contract.setBranchId(jaxbBranchId);
+        JAXBElement<Long> jaxbTypeId = new JAXBElement(new QName(NS_CONTRACTS_ADMIN, "TypeId"), String.class,
                 TYPE_ID);
-        contract.setTypeId(JAXBTypeId);
+        contract.setTypeId(jaxbTypeId);
         contract.setClientId(Long.valueOf(departmentId));
         contract.setStatus("A");
         Contract.OutLinks outLinks = new Contract.OutLinks();
@@ -260,8 +259,10 @@ public class CorporateCustomer {
         Response responseKeyGeneration = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
         String keyId = responseKeyGeneration.getUserAttrs().getParamValue().get(0).getVal().getValue();
         String keyVal = responseKeyGeneration.getUserAttrs().getParamValue().get(1).getVal().getValue();
-        log.info("keyId : " + keyId);
-        log.info("keyVal : " + keyVal);
+        String kcv = responseKeyGeneration.getUserAttrs().getParamValue().get(2).getVal().getValue();
+//        log.info("kcv : " + kcv);
+//        log.info("keyId : " + keyId);
+//        log.info("keyVal : " + keyVal);
         ReferenceId referenceId = new ReferenceId(util);
         TerminalResponse terminalResponse = new TerminalResponse();
         String customerId = term.getClientID();
@@ -272,7 +273,6 @@ public class CorporateCustomer {
             request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
             request.setKind(Constants.TRAN_KIND_MODIFY_TERMINAL);
             request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
-
             admin.setObjectMustExist(false);
             Terminal terminal = new Terminal();
             terminal.setName(terminalRid);
@@ -351,8 +351,7 @@ public class CorporateCustomer {
             terminalResponse.setId(String.valueOf(response.getSpecific().getAdmin().getTerminal().getId()));
             terminalResponse.setCode(SUCCESS_CODE_000);
             terminalResponse.setDescription(APPROVED_RESULT);
-            terminalResponse.setKeyType("TMK");
-            terminalResponse.setKcv("");
+            terminalResponse.setKcv(kcv);
             terminalResponse.setKeyValue(keyVal);
             return terminalResponse;
         }

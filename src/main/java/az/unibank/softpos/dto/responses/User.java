@@ -1,4 +1,4 @@
-package az.unibank.softpos.dto;
+package az.unibank.softpos.dto.responses;
 
 import lombok.Getter;
 import lombok.Setter;

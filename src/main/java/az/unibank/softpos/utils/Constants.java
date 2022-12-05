@@ -30,8 +30,6 @@ public class Constants {
     public static final Long TYPE_ID = 81L;
     public static final String RTP_URL = "RTP_URL";
     public static final String CONTRACT_CCY = "ContractCcy";
-    public static final String CONTRACT_AVAIL_BALANCE = "ContractAvailBalance";
-    public static final String CONTRACT_LEDGER_BALANCE = "ContractLedgerBalance";
 
     public static final String TX_DATE_FORMAT = "dd-MM-yyyy'T'HH:mm:ss";
     public static final String EXPIRY_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
