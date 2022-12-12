@@ -57,9 +57,8 @@ public class ReferenceId {
         StringWriter sw = new StringWriter();
         String request = init.jaxbProcessor.toXml(sw, tranInvoke);
         log.trace("request: " + request);
-        Response response = init.callSOAP(request, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response response = init.callSOAP(request, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
-
         return externalId;
     }
         return null;
@@ -77,9 +76,9 @@ public class ReferenceId {
         tranInvoke.setRequest(request);
         StringWriter sw = new StringWriter();
         String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
-        Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response response = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
-            Long id = Long.parseLong(response.getUserAttrs().getParamValue().get(0).getVal().getValue().substring(2,8)) +1;
+            long id = Long.parseLong(response.getUserAttrs().getParamValue().get(0).getVal().getValue().substring(2,8)) +1;
             termRid = "SP" + id;
         }
         return termRid;

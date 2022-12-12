@@ -1,7 +1,9 @@
 package az.unibank.softpos.service.methods;
 
 
-import az.unibank.softpos.dto.requests.*;
+import az.unibank.softpos.dto.requests.CorpCustomer;
+import az.unibank.softpos.dto.requests.SubCustomer;
+import az.unibank.softpos.dto.requests.Term;
 import az.unibank.softpos.dto.responses.*;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
@@ -25,7 +27,6 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.Map;
 
 import static az.unibank.softpos.utils.Constants.*;
@@ -36,6 +37,8 @@ import static az.unibank.softpos.utils.Constants.*;
 @Service
 public class CorporateCustomer {
     Init init = new Init();
+
+    TranInvoke tranInvoke = new TranInvoke();
     private final Util util;
     private Map<String, String> txParamsMap;
 
@@ -48,45 +51,40 @@ public class CorporateCustomer {
             Company company = new Company();
             String title = TITLE_MERCHANT + cust.getCompanyName();
             Person.SubjectDocuments subjectdocuments = new Person.SubjectDocuments();
-            TranInvoke tranInvoke = new TranInvoke();
             Request RTP_Request = new Request();
             RTP_Request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
             RTP_Request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
             RTP_Request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
             Request.Specific specific = new Request.Specific();
             Request.Specific.Admin admin = new Request.Specific.Admin();
-            Subject subject = new Subject();
-            Corporation corporation = new Corporation();
-            corporation.setTypeRid(TYPE_RID_CORPORATE);
+            Subject subject1 = new Subject();
+            Corporation corp = new Corporation();
+            corp.setTypeRid(TYPE_RID_CORPORATE);
             JAXBElement<SubjectBase.SubjectDocuments> documentsJAXBElement = new JAXBElement<>(Constants.NS_SUBJECTS_ADMIN_QNAME, SubjectBase.SubjectDocuments.class, subjectdocuments);
             Document document = new Document();
             document.setTypeRid(TYPE_RID_DOC);
             document.setRid(cust.getInnRid());
             subjectdocuments.getDocument().add(document);
-            corporation.setSubjectDocuments(documentsJAXBElement);
-
+            corp.setSubjectDocuments(documentsJAXBElement);
             JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "Title"), String.class, title);
-            corporation.setTitle(jaxbElementTitle);
-            JAXBElement<String> jaxbElementLegalTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "LegalTitle"), String.class, title);
-            corporation.setLegalTitle(jaxbElementLegalTitle);
-            JAXBElement<String> jaxbElementLatTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "LatTitle"), String.class, title);
-            corporation.setLatTitle(jaxbElementLatTitle);
-            JAXBElement<String> jaxbElementShortTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "ShortTitle"), String.class, title);
-            corporation.setShortTitle(jaxbElementShortTitle);
+            corp.setTitle(jaxbElementTitle);
+            corp.setLatTitle(jaxbElementTitle);
+            corp.setLegalTitle(jaxbElementTitle);
+            corp.setShortTitle(jaxbElementTitle);
             com.tranzaxis.schemas.common_types.ContactAddress contactAddress = new com.tranzaxis.schemas.common_types.ContactAddress();
             contactAddress.setCountryId(COUNTRY_CODE);
-            JAXBElement<com.tranzaxis.schemas.common_types.ContactAddress> jaxbElementContactAddress = new JAXBElement(new QName(NS_SUBJECTS_ADMIN, "Address"), String.class,
+            JAXBElement<com.tranzaxis.schemas.common_types.ContactAddress> jaxbElementContactAddress = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "Address"), com.tranzaxis.schemas.common_types.ContactAddress.class,
                     contactAddress);
-            corporation.setAddress(jaxbElementContactAddress);
-            subject.setCorporation(corporation);
-            admin.setSubject(subject);
+            corp.setAddress(jaxbElementContactAddress);
+            subject1.setCorporation(corp);
+            admin.setSubject(subject1);
             specific.setAdmin(admin);
             RTP_Request.setSpecific(specific);
             tranInvoke.setRequest(RTP_Request);
             StringWriter sw = new StringWriter();
             String request = init.jaxbProcessor.toXml(sw, tranInvoke);
             log.trace("request : " + request);
-            Response response = init.callSOAP(request, Init.STANDARD_TIMEOUT, txParamsMap.get(RTP_URL));
+            Response response = init.callSOAP(request, txParamsMap.get(RTP_URL));
             if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
                 Long customerId = response.getSpecific().getAdmin().getSubject().getCorporation().getId();
                 String externalId = referenceId.setExternalId(customerId, headerRequestorInitiatorRid);
@@ -110,12 +108,11 @@ public class CorporateCustomer {
         ReferenceId referenceId = new ReferenceId(util);
         CustomerResponse customerResponse = new CustomerResponse();
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        String title = "MPOS " + subcust.getCompanyName();
-        TranInvoke tranInvoke = new TranInvoke();
-        Request RTP_Request = new Request();
-        RTP_Request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-        RTP_Request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
-        RTP_Request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        String title = TITLE_MERCHANT + subcust.getCompanyName();
+        Request request = new Request();
+        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
+        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
         Request.Specific specific = new Request.Specific();
         Request.Specific.Admin admin = new Request.Specific.Admin();
         Subject subject = new Subject();
@@ -126,12 +123,9 @@ public class CorporateCustomer {
         department.setInstId(JAXInstID);
         JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "Title"), String.class, title);
         department.setTitle(jaxbElementTitle);
-        JAXBElement<String> JAXLegalTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "LegalTitle"), String.class, title);
-        department.setLegalTitle(JAXLegalTitle);
-        JAXBElement<String> JAXLatTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "LatTitle"), String.class, title);
-        department.setLatTitle(JAXLatTitle);
-        JAXBElement<String> JAXShortTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "ShortTitle"), String.class, title);
-        department.setShortTitle(JAXShortTitle);
+        department.setLatTitle(jaxbElementTitle);
+        department.setLegalTitle(jaxbElementTitle);
+        department.setShortTitle(jaxbElementTitle);
         JAXBElement<Long> jaxbElementParentOrgId = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "ParentOrgId"), Long.class, Long.valueOf(subcust.getClientID()));
         department.setParentOrgId(jaxbElementParentOrgId);
         JAXBElement<Long> jaxbElementMccId = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "MccId"), Long.class, Long.valueOf(subcust.getMccCode()));
@@ -139,12 +133,12 @@ public class CorporateCustomer {
         subject.setDepartment(department);
         admin.setSubject(subject);
         specific.setAdmin(admin);
-        RTP_Request.setSpecific(specific);
-        tranInvoke.setRequest(RTP_Request);
+        request.setSpecific(specific);
+        tranInvoke.setRequest(request);
         StringWriter sw = new StringWriter();
-        String request = init.jaxbProcessor.toXml(sw, tranInvoke);
+        String requestBody = init.jaxbProcessor.toXml(sw, tranInvoke);
         log.trace("request: " + request);
-        Response response = init.callSOAP(request, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response response = init.callSOAP(requestBody, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(Constants.APPROVED_RESULT)) {
             String departmentId = response.getSpecific().getAdmin().getSubject().getDepartment().getId().toString();
             String externalId = referenceId.setExternalId(Long.valueOf(departmentId), headerRequestorInitiatorRid);
@@ -166,7 +160,6 @@ public class CorporateCustomer {
         TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-
         request.setKind(Constants.TRAN_KIND_MODIFY_CONTRACT);
         request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
         Request.Specific specific = new Request.Specific();
@@ -195,7 +188,7 @@ public class CorporateCustomer {
         tranInvoke.setRequest(request);
         StringWriter sw = new StringWriter();
         String bodyXml = init.jaxbProcessor.toXml(sw, tranInvoke);
-        Response response = init.callSOAP(bodyXml, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response response = init.callSOAP(bodyXml, txParamsMap.get(Constants.RTP_URL));
         log.trace("request: " + bodyXml);
         return response.getSpecific().getAdmin().getContract().getRid();
     }
@@ -203,7 +196,6 @@ public class CorporateCustomer {
 
     public Long generateRtpRequestForCommonContract(String departmentId, String contractRid, String headerRequestorInitiatorRid) throws Exception {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
         Request.Specific specific = new Request.Specific();
         Request.Specific.Admin admin = new Request.Specific.Admin();
@@ -213,10 +205,10 @@ public class CorporateCustomer {
         Contract contract = new Contract();
         contract.setInstId(1L);
 
-        JAXBElement<Long> jaxbBranchId = new JAXBElement(new QName(NS_CONTRACTS_ADMIN, "BranchId"), String.class,
+        JAXBElement<Long> jaxbBranchId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "BranchId"), Long.class,
                 BRANCH_ID);
         contract.setBranchId(jaxbBranchId);
-        JAXBElement<Long> jaxbTypeId = new JAXBElement(new QName(NS_CONTRACTS_ADMIN, "TypeId"), String.class,
+        JAXBElement<Long> jaxbTypeId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "TypeId"), Long.class,
                 TYPE_ID);
         contract.setTypeId(jaxbTypeId);
         contract.setClientId(Long.valueOf(departmentId));
@@ -235,7 +227,7 @@ public class CorporateCustomer {
         request.setSpecific(specific);
         StringWriter sw = new StringWriter();
         String requestCont = init.jaxbProcessor.toXml(sw, tranInvoke);
-        Response commonResponse = init.callSOAP(requestCont, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response commonResponse = init.callSOAP(requestCont, txParamsMap.get(Constants.RTP_URL));
         if (commonResponse.getResult().equalsIgnoreCase("Approved")) {
             return commonResponse.getSpecific().getAdmin().getContract().getId();
         }
@@ -246,7 +238,6 @@ public class CorporateCustomer {
 
     public TerminalResponse createTerminal(Term term, String headerRequestorInitiatorRid) throws Exception {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        TranInvoke tranInvoke = new TranInvoke();
         String terminalName = term.getTerminalName();
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
@@ -256,7 +247,7 @@ public class CorporateCustomer {
         tranInvoke.setRequest(request);
         StringWriter swriter = new StringWriter();
         String xmlBody = init.jaxbProcessor.toXml(swriter, tranInvoke);
-        Response responseKeyGeneration = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response responseKeyGeneration = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
         String keyId = responseKeyGeneration.getUserAttrs().getParamValue().get(0).getVal().getValue();
         String keyVal = responseKeyGeneration.getUserAttrs().getParamValue().get(1).getVal().getValue();
         String kcv = responseKeyGeneration.getUserAttrs().getParamValue().get(2).getVal().getValue();
@@ -266,16 +257,15 @@ public class CorporateCustomer {
         String terminalRid = referenceId.getTerminalRid(headerRequestorInitiatorRid);
         if (terminalRid != null || customerId != null) {
             Request req = new Request();
-            Request.Specific specific = new Request.Specific();
-            Request.Specific.Admin admin = new Request.Specific.Admin();
+            Request.Specific specific1 = new Request.Specific();
+            Request.Specific.Admin admin1 = new Request.Specific.Admin();
             req.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
             req.setKind(Constants.TRAN_KIND_MODIFY_TERMINAL);
             req.setLifePhase(Constants.LIFE_PHASE_SINGLE);
             req.setOriginatorInstId(1L);
-            admin.setObjectMustExist(false);
+            admin1.setObjectMustExist(false);
             Terminal terminal = new Terminal();
             terminal.setName(terminalRid);
-            terminal.setClassGuid("aclKBZ7XPXNLHOBDHLHAAMPGXSZKU");
             terminal.setTermType("Pos");
             JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "ExternalRid"), String.class, terminalRid);
             terminal.setExternalRid(jaxbElementExternalRid);
@@ -314,15 +304,15 @@ public class CorporateCustomer {
             terminal.setTraceProfile(jaxbElementTraceProfile);
 
 
-            Terminal.Keys keys =new Terminal.Keys();
+            Terminal.Keys keys = new Terminal.Keys();
             DesKey desKey = new DesKey();
             DesKeyWithKek desKeyWithKek = new DesKeyWithKek();
             desKey.setId(Long.valueOf(keyId));
             desKeyWithKek.setId(Long.valueOf(keyId));
 
-            JAXBElement<DesKey> desKeyJAXBElement1 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Pmk"), DesKey.class , desKey);
-            JAXBElement<DesKeyWithKek> desKeyJAXBElement2 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Mmk"), DesKeyWithKek.class , desKeyWithKek);
-            JAXBElement<DesKeyWithKek> desKeyJAXBElement3 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Emk"), DesKeyWithKek.class , desKeyWithKek);
+            JAXBElement<DesKey> desKeyJAXBElement1 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Pmk"), DesKey.class, desKey);
+            JAXBElement<DesKeyWithKek> desKeyJAXBElement2 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Mmk"), DesKeyWithKek.class, desKeyWithKek);
+            JAXBElement<DesKeyWithKek> desKeyJAXBElement3 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Emk"), DesKeyWithKek.class, desKeyWithKek);
 
             keys.setPmk(desKeyJAXBElement1);
             keys.setMmk(desKeyJAXBElement2);
@@ -339,13 +329,13 @@ public class CorporateCustomer {
 
 
             terminal.setAddress(jaxbElementAddress);
-            admin.setTerminal(terminal);
-            specific.setAdmin(admin);
-            req.setSpecific(specific);
+            admin1.setTerminal(terminal);
+            specific1.setAdmin(admin1);
+            req.setSpecific(specific1);
             tranInvoke.setRequest(req);
             StringWriter sw1 = new StringWriter();
             String xml = init.jaxbProcessor.toXml(sw1, tranInvoke);
-            Response response = init.callSOAP(xml, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+            Response response = init.callSOAP(xml, txParamsMap.get(Constants.RTP_URL));
             log.info(("tranId: " + response.getId()));
             terminalResponse.setTermRid(response.getSpecific().getAdmin().getTerminal().getName());
             terminalResponse.setTerminalName(terminalName);
@@ -381,7 +371,7 @@ public class CorporateCustomer {
         tranInvoke.setRequest(request);
         StringWriter sw = new StringWriter();
         String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
-        Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response response = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
             softResponse.setId(Constants.SUCCESS_CODE_000);
             softResponse.setResult(Boolean.TRUE);
@@ -417,7 +407,7 @@ public class CorporateCustomer {
         tranInvoke.setRequest(request);
         StringWriter sw = new StringWriter();
         String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
-        Response response = init.callSOAP(xmlBody, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response response = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
             softResponse.setId(Constants.SUCCESS_CODE_000);
             softResponse.setResult(Boolean.TRUE);
@@ -442,15 +432,15 @@ public class CorporateCustomer {
         request.setKind("ReadTerminal");
         request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
         admin.setObjectMustExist(true);
-        Terminal terminal = new Terminal();
-        terminal.setId(id);
-        admin.setTerminal(terminal);
+        Terminal term = new Terminal();
+        term.setId(id);
+        admin.setTerminal(term);
         specific.setAdmin(admin);
         request.setSpecific(specific);
         tranInvoke.setRequest(request);
         StringWriter sw = new StringWriter();
         String xml = init.jaxbProcessor.toXml(sw, tranInvoke);
-        Response response = init.callSOAP(xml, Init.STANDARD_TIMEOUT, txParamsMap.get(Constants.RTP_URL));
+        Response response = init.callSOAP(xml, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
             String status = response.getSpecific().getAdmin().getTerminal().getStatus();
             switch (status) {

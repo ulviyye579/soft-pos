@@ -1,13 +1,4 @@
-/*
- * Copyright (c) 2021.
- *
- *
- *  @author Ulviyya Musayeva
- *
- */
-
 package az.unibank.softpos.controllers;
-
 
 import az.unibank.softpos.dto.requests.*;
 import az.unibank.softpos.dto.responses.*;
@@ -127,7 +118,6 @@ public class CustomerServiceController {
             terminalDetails = corporateCustomer.getStatusTerminal(id, headerRequestorInitiatorRid);
             return ResponseEntity.ok(terminalDetails);
         } catch (Exception ex) {
-            ex.printStackTrace();
             log.error(ex.getLocalizedMessage());
             terminalDetails.setCode(Constants.DECLINED_CODE_001);
             return ResponseEntity.ok(terminalDetails);

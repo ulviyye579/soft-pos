@@ -41,7 +41,6 @@ public class UserController {
             user.setToken(token);
             return ResponseEntity.ok(user);
         } catch (Exception ex) {
-            ex.printStackTrace();
             log.error(ex.getLocalizedMessage());
         }
         return null;
@@ -52,7 +51,7 @@ public class UserController {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String getJWTToken(String username, String password) throws Exception {
+    private String getJWTToken(String username, String password) {
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("ROLE_USER");
         try {
@@ -77,23 +76,6 @@ public class UserController {
         return null;
     }
 
-//    @GetMapping(value = "/check/token", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<UserToken> checkToken(HttpServletRequest request) {
-//        UserToken userToken = new UserToken();
-//       try {
-//           String jwtToken = request.getHeader(util.getHeader()).replace(util.getPrefix(), "");
-//           Claims claims = Jwts.parser().setSigningKey(util.getRequestPassword().getBytes()).parseClaimsJws(jwtToken).getBody();
-//           if (claims.get("authorities") != null) {
-//               userToken.setResult(true);
-//           }
-//           return ResponseEntity.ok(userToken);
-//       }
-//       catch (Exception exception) {
-//           userToken.setResult(false);
-//           return ResponseEntity.ok(userToken);
-//       }
-//    }
-
     @GetMapping(value = "/check/token/{token}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserToken> checkTokenV2(@PathVariable String token) {
         UserToken userToken = new UserToken();
@@ -102,7 +84,7 @@ public class UserController {
             String jsonString = new String(Base64.getDecoder().decode(tokenParts[1].getBytes()));
             JwtToken jwtToken = util.unmarshal(jsonString);
             log.trace(jwtToken.toString());
-            Long expiry = Long.valueOf(jwtToken.getExp()) * 1000L;
+            long expiry = Long.valueOf(jwtToken.getExp()) * 1000L;
 
             long dateNow = new Date().getTime();
             if (expiry > dateNow)

@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@SuppressWarnings("unchecked")
+
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
 private final Util util;
@@ -29,7 +31,7 @@ private final Util util;
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
-            if (checkJWTToken(request, response)) {
+            if (checkJWTToken(request)) {
                 Claims claims = validateToken(request);
                 if (claims.get("authorities") != null) {
                     setUpSpringAuthentication(claims);
@@ -50,16 +52,10 @@ private final Util util;
 
     public Claims validateToken(HttpServletRequest request) {
         String jwtToken = request.getHeader(util.getHeader()).replace(util.getPrefix(), "");
-        return Jwts.parser().setSigningKey(util.getRequestPassword().getBytes()).parseClaimsJws(jwtToken).getBody();
+        return Jwts.parserBuilder().setSigningKey(util.getRequestPassword().getBytes()).build().parseClaimsJws(jwtToken).getBody();
     }
 
-    /**
-     * Authentication method in Spring flow
-     *
-     * @param claims
-     */
     private void setUpSpringAuthentication(Claims claims) {
-        @SuppressWarnings("unchecked")
         List<String> authorities = (List<String>) claims.get("authorities");
 
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
@@ -67,12 +63,8 @@ private final Util util;
         SecurityContextHolder.getContext().setAuthentication(auth);
 
     }
-
-    private boolean checkJWTToken(HttpServletRequest request, HttpServletResponse res) {
+    private boolean checkJWTToken(HttpServletRequest request) {
         String authenticationHeader = request.getHeader(util.getHeader());
-        if (authenticationHeader == null || !authenticationHeader.startsWith(util.getPrefix()))
-            return false;
-        return true;
+        return authenticationHeader != null && authenticationHeader.startsWith(util.getPrefix());
     }
-
 }

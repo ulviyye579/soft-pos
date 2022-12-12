@@ -12,13 +12,9 @@ public class TomcatConfig {
 
     @Bean
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> servletContainerCustomizer() {
-        return (TomcatServletWebServerFactory container) -> {
-            container.addContextCustomizers((Context context) -> {
-                // This configuration is used to improve initialization performance.
-
-                context.setResources(new ExtractingRoot());
-                context.setReloadable(false);
-            });
-        };
+        return (TomcatServletWebServerFactory container) -> container.addContextCustomizers((Context context) -> {
+            context.setResources(new ExtractingRoot());
+            context.setReloadable(false);
+        });
     }
 }

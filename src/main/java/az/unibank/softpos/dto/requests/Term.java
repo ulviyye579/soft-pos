@@ -9,7 +9,7 @@ public class Term {
     private String terminalName;
     @ApiModelProperty( example = "123456")
     private String clientID;
-    @ApiModelProperty( example = "Rashid Behbudov str. 55")
+    @ApiModelProperty( example = "Rashid B. str. 55")
     private String address;
     @ApiModelProperty( example = "Baku")
     private String city;

@@ -8,13 +8,10 @@ import com.tranzaxis.schemas.tran.UndoInvoke;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
-import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 import org.xmlsoap.schemas.soap.envelope.Envelope;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.Writer;
 
 @Slf4j
@@ -40,7 +37,8 @@ public class JaxbProcessor {
             instanceSoap = new JaxbProcessor(Envelope.class);
 
         } catch (Exception e) {
-            throw new RuntimeException("Exception occurred while creating singleton instance");
+            e.printStackTrace();
+            throw new RuntimeException("Exception occurred while creating singleton instance"+e.getMessage());
         }
     }
 
@@ -105,11 +103,5 @@ public class JaxbProcessor {
         return writer.toString();
     }
 
-    public void toJson(Writer writer, Object jaxbAnnotedObj) throws JAXBException {
-        XMLStreamWriter xmlStreamWriter = new MappedXMLStreamWriter(convention, writer);
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
-        marshaller.marshal(jaxbAnnotedObj, xmlStreamWriter);
-    }
 
 }

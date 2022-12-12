@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2021.
- *
- *
- *  @author Sanan Garibli
- *
- */
-
 package az.unibank.softpos.dto.responses;
 
 import lombok.Getter;

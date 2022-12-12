@@ -10,9 +10,9 @@ public class SubCustomer {
     private String clientID;
     @ApiModelProperty( example = "5732")
     private String mccCode;
-    @ApiModelProperty( example = "AZ23UBAZ42632813440060AZN004")
+    @ApiModelProperty( example = "AZ23789542632813440060AZN004")
     private String account;
-    @ApiModelProperty( example = "Rashid Behbudov str. 55")
+    @ApiModelProperty( example = "Rashid B. str. 55")
     private String address;
     @ApiModelProperty( example = "Baku")
     private String city;
