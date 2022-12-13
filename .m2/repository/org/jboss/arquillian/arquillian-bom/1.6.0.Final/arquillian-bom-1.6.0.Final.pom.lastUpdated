@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 13 12:20:25 AZT 2022
+https\://repo.maven.apache.org/maven2/.lastUpdated=1670919625059
+c8d8dbdb3c81266bf08feff5f22e3275001bffee@default-unibank-local-repo-http\://sonatype.unibank.lan\:8081/repository/maven-public/.lastUpdated=1670919624856
+http\://sonatype.unibank.lan\:8081/repository/maven-public/.error=Could not transfer artifact org.jboss.arquillian\:arquillian-bom\:pom\:1.6.0.Final from/to unibank-local-repo (http\://sonatype.unibank.lan\:8081/repository/maven-public/)\: transfer failed for http\://sonatype.unibank.lan\:8081/repository/maven-public/org/jboss/arquillian/arquillian-bom/1.6.0.Final/arquillian-bom-1.6.0.Final.pom

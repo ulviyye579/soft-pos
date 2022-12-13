@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 13 12:20:20 AZT 2022
+https\://repo.maven.apache.org/maven2/.lastUpdated=1670919620576
+c8d8dbdb3c81266bf08feff5f22e3275001bffee@default-unibank-local-repo-http\://sonatype.unibank.lan\:8081/repository/maven-public/.lastUpdated=1670919620412
+http\://sonatype.unibank.lan\:8081/repository/maven-public/.error=Could not transfer artifact org.xmlunit\:xmlunit-core\:pom\:2.7.0 from/to unibank-local-repo (http\://sonatype.unibank.lan\:8081/repository/maven-public/)\: transfer failed for http\://sonatype.unibank.lan\:8081/repository/maven-public/org/xmlunit/xmlunit-core/2.7.0/xmlunit-core-2.7.0.pom

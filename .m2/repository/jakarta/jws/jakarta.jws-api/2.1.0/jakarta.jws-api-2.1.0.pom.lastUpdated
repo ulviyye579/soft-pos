@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 13 12:20:36 AZT 2022
+https\://repo.maven.apache.org/maven2/.lastUpdated=1670919636393
+c8d8dbdb3c81266bf08feff5f22e3275001bffee@default-unibank-local-repo-http\://sonatype.unibank.lan\:8081/repository/maven-public/.lastUpdated=1670919636202
+http\://sonatype.unibank.lan\:8081/repository/maven-public/.error=Could not transfer artifact jakarta.jws\:jakarta.jws-api\:pom\:2.1.0 from/to unibank-local-repo (http\://sonatype.unibank.lan\:8081/repository/maven-public/)\: transfer failed for http\://sonatype.unibank.lan\:8081/repository/maven-public/jakarta/jws/jakarta.jws-api/2.1.0/jakarta.jws-api-2.1.0.pom

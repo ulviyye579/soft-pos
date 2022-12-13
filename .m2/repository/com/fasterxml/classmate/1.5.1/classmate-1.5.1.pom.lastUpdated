@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 13 12:20:26 AZT 2022
+https\://repo.maven.apache.org/maven2/.lastUpdated=1670919626928
+c8d8dbdb3c81266bf08feff5f22e3275001bffee@default-unibank-local-repo-http\://sonatype.unibank.lan\:8081/repository/maven-public/.lastUpdated=1670919626740
+http\://sonatype.unibank.lan\:8081/repository/maven-public/.error=Could not transfer artifact com.fasterxml\:classmate\:pom\:1.5.1 from/to unibank-local-repo (http\://sonatype.unibank.lan\:8081/repository/maven-public/)\: transfer failed for http\://sonatype.unibank.lan\:8081/repository/maven-public/com/fasterxml/classmate/1.5.1/classmate-1.5.1.pom

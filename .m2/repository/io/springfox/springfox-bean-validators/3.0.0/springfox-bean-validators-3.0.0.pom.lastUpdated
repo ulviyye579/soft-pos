@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 13 12:20:33 AZT 2022
+https\://repo.maven.apache.org/maven2/.lastUpdated=1670919633665
+c8d8dbdb3c81266bf08feff5f22e3275001bffee@default-unibank-local-repo-http\://sonatype.unibank.lan\:8081/repository/maven-public/.lastUpdated=1670919633500
+http\://sonatype.unibank.lan\:8081/repository/maven-public/.error=Could not transfer artifact io.springfox\:springfox-bean-validators\:pom\:3.0.0 from/to unibank-local-repo (http\://sonatype.unibank.lan\:8081/repository/maven-public/)\: transfer failed for http\://sonatype.unibank.lan\:8081/repository/maven-public/io/springfox/springfox-bean-validators/3.0.0/springfox-bean-validators-3.0.0.pom

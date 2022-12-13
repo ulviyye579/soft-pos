@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 13 12:20:18 AZT 2022
+https\://repo.maven.apache.org/maven2/.lastUpdated=1670919618226
+c8d8dbdb3c81266bf08feff5f22e3275001bffee@default-unibank-local-repo-http\://sonatype.unibank.lan\:8081/repository/maven-public/.lastUpdated=1670919618049
+http\://sonatype.unibank.lan\:8081/repository/maven-public/.error=Could not transfer artifact org.mockito\:mockito-core\:pom\:3.6.28 from/to unibank-local-repo (http\://sonatype.unibank.lan\:8081/repository/maven-public/)\: transfer failed for http\://sonatype.unibank.lan\:8081/repository/maven-public/org/mockito/mockito-core/3.6.28/mockito-core-3.6.28.pom

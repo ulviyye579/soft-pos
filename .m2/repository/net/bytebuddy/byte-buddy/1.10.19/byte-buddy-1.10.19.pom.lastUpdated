@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 13 12:20:18 AZT 2022
+https\://repo.maven.apache.org/maven2/.lastUpdated=1670919618446
+c8d8dbdb3c81266bf08feff5f22e3275001bffee@default-unibank-local-repo-http\://sonatype.unibank.lan\:8081/repository/maven-public/.lastUpdated=1670919618265
+http\://sonatype.unibank.lan\:8081/repository/maven-public/.error=Could not transfer artifact net.bytebuddy\:byte-buddy\:pom\:1.10.19 from/to unibank-local-repo (http\://sonatype.unibank.lan\:8081/repository/maven-public/)\: transfer failed for http\://sonatype.unibank.lan\:8081/repository/maven-public/net/bytebuddy/byte-buddy/1.10.19/byte-buddy-1.10.19.pom

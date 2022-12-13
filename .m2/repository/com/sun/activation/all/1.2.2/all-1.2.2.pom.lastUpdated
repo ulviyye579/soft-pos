@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 13 12:20:15 AZT 2022
+https\://repo.maven.apache.org/maven2/.lastUpdated=1670919615373
+c8d8dbdb3c81266bf08feff5f22e3275001bffee@default-unibank-local-repo-http\://sonatype.unibank.lan\:8081/repository/maven-public/.lastUpdated=1670919615188
+http\://sonatype.unibank.lan\:8081/repository/maven-public/.error=Could not transfer artifact com.sun.activation\:all\:pom\:1.2.2 from/to unibank-local-repo (http\://sonatype.unibank.lan\:8081/repository/maven-public/)\: transfer failed for http\://sonatype.unibank.lan\:8081/repository/maven-public/com/sun/activation/all/1.2.2/all-1.2.2.pom
