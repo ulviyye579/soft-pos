@@ -32,7 +32,7 @@ public class Constants {
     public static final String NS_SUBJECTS_ADMIN = "http://schemas.tranzaxis.com/subjects-admin.xsd";
     public static final String NS_ACQUIRING_ADMIN = "http://schemas.tranzaxis.com/acquiring-admin.xsd";
     public static final QName NS_SUBJECTS_ADMIN_QNAME = new QName(Constants.NS_SUBJECTS_ADMIN, "SubjectDocuments");
-
+    public static final String NS_TRAN_WSDL = "http://schemas.tranzaxis.com/tran.wsdl";
 
     private Constants() {
     }

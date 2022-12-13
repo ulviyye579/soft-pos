@@ -1,6 +1,7 @@
 FROM maven:3.5-jdk-11-slim as maven
 COPY ./pom.xml ./pom.xml
 COPY ./src ./src
+COPY .m2/settings.xml /root/.m2/settings.xml
 RUN mvn package -DskipTests
 
 FROM openjdk:11-jdk-slim

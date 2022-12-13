@@ -38,7 +38,6 @@ import static az.unibank.softpos.utils.Constants.*;
 public class CorporateCustomer {
     Init init = new Init();
 
-    private final TranInvoke tranInvoke;
     private final Util util;
     private Map<String, String> txParamsMap;
 
@@ -51,10 +50,10 @@ public class CorporateCustomer {
             Company company = new Company();
             String title = TITLE_MERCHANT + cust.getCompanyName();
             Person.SubjectDocuments subjectdocuments = new Person.SubjectDocuments();
-            Request RTP_Request = new Request();
-            RTP_Request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-            RTP_Request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
-            RTP_Request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+            Request request = new Request();
+            request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+            request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
+            request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
             Request.Specific specific = new Request.Specific();
             Request.Specific.Admin admin = new Request.Specific.Admin();
             Subject subject1 = new Subject();
@@ -79,12 +78,10 @@ public class CorporateCustomer {
             subject1.setCorporation(corp);
             admin.setSubject(subject1);
             specific.setAdmin(admin);
-            RTP_Request.setSpecific(specific);
-            tranInvoke.setRequest(RTP_Request);
-            StringWriter sw = new StringWriter();
-            String request = init.jaxbProcessor.toXml(sw, tranInvoke);
-            log.trace("request : " + request);
-            Response response = init.callSOAP(request, txParamsMap.get(RTP_URL));
+            request.setSpecific(specific);
+            String xmlBody = init.jaxbProcessor.marshallToXml(request);
+            log.trace("xmlBody : " + xmlBody);
+            Response response = init.callSOAP(xmlBody, txParamsMap.get(RTP_URL));
             if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
                 Long customerId = response.getSpecific().getAdmin().getSubject().getCorporation().getId();
                 String externalId = referenceId.setExternalId(customerId, headerRequestorInitiatorRid);
@@ -133,9 +130,7 @@ public class CorporateCustomer {
         admin.setSubject(subject);
         specific.setAdmin(admin);
         request.setSpecific(specific);
-        tranInvoke.setRequest(request);
-        StringWriter sw = new StringWriter();
-        String requestBody = init.jaxbProcessor.toXml(sw, tranInvoke);
+        String requestBody = init.jaxbProcessor.marshallToXml(request);
         log.trace("request: " + request);
         Response response = init.callSOAP(requestBody, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(Constants.APPROVED_RESULT)) {
@@ -183,9 +178,7 @@ public class CorporateCustomer {
         admin.setContract(contract);
         specific.setAdmin(admin);
         request.setSpecific(specific);
-        tranInvoke.setRequest(request);
-        StringWriter sw = new StringWriter();
-        String bodyXml = init.jaxbProcessor.toXml(sw, tranInvoke);
+        String bodyXml = init.jaxbProcessor.marshallToXml(request);
         Response response = init.callSOAP(bodyXml, txParamsMap.get(Constants.RTP_URL));
         log.trace("request: " + bodyXml);
         return response.getSpecific().getAdmin().getContract().getRid();
@@ -221,10 +214,8 @@ public class CorporateCustomer {
         admin.setContract(contract);
         specific.setAdmin(admin);
         request.setSpecific(specific);
-        tranInvoke.setRequest(request);
         request.setSpecific(specific);
-        StringWriter sw = new StringWriter();
-        String requestCont = init.jaxbProcessor.toXml(sw, tranInvoke);
+        String requestCont = init.jaxbProcessor.marshallToXml(request);
         Response commonResponse = init.callSOAP(requestCont, txParamsMap.get(Constants.RTP_URL));
         if (commonResponse.getResult().equalsIgnoreCase("Approved")) {
             return commonResponse.getSpecific().getAdmin().getContract().getId();
@@ -242,10 +233,9 @@ public class CorporateCustomer {
         request.setKind("Udt");
         request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
         request.setUdtType("KeyGeneration");
-        tranInvoke.setRequest(request);
-        StringWriter swriter = new StringWriter();
-        String xmlBody = init.jaxbProcessor.toXml(swriter, tranInvoke);
+        String xmlBody = init.jaxbProcessor.marshallToXml(request);
         Response responseKeyGeneration = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
+
         String keyId = responseKeyGeneration.getUserAttrs().getParamValue().get(0).getVal().getValue();
         String keyVal = responseKeyGeneration.getUserAttrs().getParamValue().get(1).getVal().getValue();
         String kcv = responseKeyGeneration.getUserAttrs().getParamValue().get(2).getVal().getValue();
@@ -330,9 +320,7 @@ public class CorporateCustomer {
             admin1.setTerminal(terminal);
             specific1.setAdmin(admin1);
             req.setSpecific(specific1);
-            tranInvoke.setRequest(req);
-            StringWriter sw1 = new StringWriter();
-            String xml = init.jaxbProcessor.toXml(sw1, tranInvoke);
+            String xml = init.jaxbProcessor.marshallToXml(req);
             Response response = init.callSOAP(xml, txParamsMap.get(Constants.RTP_URL));
             log.info(("tranId: " + response.getId()));
             terminalResponse.setTermRid(response.getSpecific().getAdmin().getTerminal().getName());

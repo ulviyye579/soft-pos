@@ -1,8 +1,10 @@
 package az.unibank.softpos.service.methods;
 
+import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.common_types.ParamValues;
 import com.tranzaxis.schemas.tokens_admin.Base;
+import com.tranzaxis.schemas.tran.Request;
 import com.tranzaxis.schemas.tran.TranInvoke;
 import com.tranzaxis.schemas.tran.UndoInvoke;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +12,11 @@ import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
 import org.xmlsoap.schemas.soap.envelope.Envelope;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
+import java.io.StringWriter;
 import java.io.Writer;
 
 @Slf4j
@@ -103,5 +108,14 @@ public class JaxbProcessor {
         return writer.toString();
     }
 
-
+    public String marshallToXml(Request request) throws JAXBException {
+        TranInvoke tranInvoke = new TranInvoke();
+        tranInvoke.setRequest(request);
+        StringWriter stringWriter = new StringWriter();
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        QName qName = new QName(Constants.NS_TRAN_WSDL, "Tran");
+        JAXBElement<TranInvoke> root = new JAXBElement<>(qName, TranInvoke.class, tranInvoke);
+        marshaller.marshal(root, stringWriter);
+        return stringWriter.toString();
+    }
 }
