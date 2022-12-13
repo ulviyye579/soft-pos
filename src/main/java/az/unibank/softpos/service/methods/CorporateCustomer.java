@@ -38,7 +38,7 @@ import static az.unibank.softpos.utils.Constants.*;
 public class CorporateCustomer {
     Init init = new Init();
 
-    TranInvoke tranInvoke = new TranInvoke();
+    private final TranInvoke tranInvoke;
     private final Util util;
     private Map<String, String> txParamsMap;
 
@@ -156,7 +156,6 @@ public class CorporateCustomer {
 
     public String generateSettlementContractRequest(String departmentId, SubCustomer subCustomer, String headerRequestorInitiatorRid) throws Exception {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
         request.setKind(Constants.TRAN_KIND_MODIFY_CONTRACT);
