@@ -37,6 +37,7 @@ build:
       - target/*.jar
     expire_in: 7d
   script:
+    - cat .m2/settings.xml
     - mvn $MAVEN_OPTS -Dmaven.test.skip=true package
 
 release:
