@@ -11,7 +11,7 @@
     <groupId>az.unibank</groupId>
     <artifactId>SoftPos</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <name>SoftPos-sp</name>
     <description>SoftPos-sp</description>
     <properties>
