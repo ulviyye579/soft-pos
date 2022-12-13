@@ -6,6 +6,6 @@ import lombok.Data;
 public class CorpCustomer {
     @ApiModelProperty( example = "ZARA")
     private String companyName;
-    @ApiModelProperty( example = "1111111111")
+    @ApiModelProperty( example = "111111111")
     private String innRid;
 }

@@ -116,7 +116,6 @@ public class CorporateCustomer {
         Request.Specific specific = new Request.Specific();
         Request.Specific.Admin admin = new Request.Specific.Admin();
         Subject subject = new Subject();
-
         Department department = new Department();
         department.setTypeId(3L);
         JAXBElement<Long> JAXInstID = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "InstId"), Long.class, 1L);
