@@ -1,10 +1,14 @@
-package az.unibank.softpos.service.methods;
+package az.unibank.softpos.service.impl;
 
 
-import az.unibank.softpos.dto.requests.CorpCustomer;
-import az.unibank.softpos.dto.requests.SubCustomer;
-import az.unibank.softpos.dto.requests.Term;
+import az.unibank.softpos.dto.requests.Company;
+import az.unibank.softpos.dto.requests.Branch;
+import az.unibank.softpos.dto.requests.POS;
 import az.unibank.softpos.dto.responses.*;
+import az.unibank.softpos.methods.ExtIdGenerator;
+import az.unibank.softpos.service.CustomerCreator;
+import az.unibank.softpos.methods.Init;
+import az.unibank.softpos.methods.KeyGenerator;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.acquiring_admin.BranchId;
@@ -35,19 +39,19 @@ import static az.unibank.softpos.utils.Constants.*;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class CorporateCustomer {
+public class CorporateCustomer implements CustomerCreator {
     Init init = new Init();
 
     private final Util util;
     private Map<String, String> txParamsMap;
 
-
-    public Company createCustomer(CorpCustomer cust, String headerRequestorInitiatorRid) throws Exception {
+@Override
+    public ResponseCustomer createCustomer(Company cust, String headerRequestorInitiatorRid) throws Exception {
         try {
 
             this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-            ReferenceId referenceId = new ReferenceId(util);
-            Company company = new Company();
+            ExtIdGenerator extIdGenerator = new ExtIdGenerator(util);
+            ResponseCustomer responseCustomer = new ResponseCustomer();
             String title = TITLE_MERCHANT + cust.getCompanyName();
             Person.SubjectDocuments subjectdocuments = new Person.SubjectDocuments();
             Request request = new Request();
@@ -84,25 +88,26 @@ public class CorporateCustomer {
             Response response = init.callSOAP(xmlBody, txParamsMap.get(RTP_URL));
             if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
                 Long customerId = response.getSpecific().getAdmin().getSubject().getCorporation().getId();
-                String externalId = referenceId.setExternalId(customerId, headerRequestorInitiatorRid);
-                company.setId(customerId.toString());
-                company.setExternalId(externalId);
-                company.setCode(SUCCESS_CODE_000);
-                company.setDescription(OK_RESULT);
+                String externalId = extIdGenerator.setExternalId(customerId, headerRequestorInitiatorRid);
+                responseCustomer.setId(customerId.toString());
+                responseCustomer.setExternalId(externalId);
+                responseCustomer.setCode(SUCCESS_CODE_000);
+                responseCustomer.setDescription(OK_RESULT);
             } else {
-                company.setCode(DECLINED_CODE_001);
-                company.setDescription(response.getResult() + ", " + response.getDeclineReason());
+                responseCustomer.setCode(DECLINED_CODE_001);
+                responseCustomer.setDescription(response.getResult() + ", " + response.getDeclineReason());
             }
 
-            return company;
+            return responseCustomer;
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception(e);
         }
     }
 
-    public CustomerResponse createSubCustomer(SubCustomer subcust, String headerRequestorInitiatorRid) throws Exception {
-        ReferenceId referenceId = new ReferenceId(util);
+    @Override
+    public CustomerResponse createSubCustomer(Branch subcust, String headerRequestorInitiatorRid) throws Exception {
+        ExtIdGenerator extIdGenerator = new ExtIdGenerator(util);
         CustomerResponse customerResponse = new CustomerResponse();
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         String title = TITLE_MERCHANT + subcust.getCompanyName();
@@ -135,7 +140,7 @@ public class CorporateCustomer {
         Response response = init.callSOAP(requestBody, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(Constants.APPROVED_RESULT)) {
             String departmentId = response.getSpecific().getAdmin().getSubject().getDepartment().getId().toString();
-            String externalId = referenceId.setExternalId(Long.valueOf(departmentId), headerRequestorInitiatorRid);
+            String externalId = extIdGenerator.setExternalId(Long.valueOf(departmentId), headerRequestorInitiatorRid);
             String contractRid = generateSettlementContractRequest(departmentId, subcust, headerRequestorInitiatorRid);
             if (!contractRid.isEmpty()) {
                 Long contractId = generateRtpRequestForCommonContract(departmentId, contractRid, headerRequestorInitiatorRid);
@@ -148,8 +153,8 @@ public class CorporateCustomer {
         return customerResponse;
     }
 
-
-    public String generateSettlementContractRequest(String departmentId, SubCustomer subCustomer, String headerRequestorInitiatorRid) throws Exception {
+    @Override
+    public String generateSettlementContractRequest(String departmentId, Branch branch, String headerRequestorInitiatorRid) throws Exception {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
@@ -167,7 +172,7 @@ public class CorporateCustomer {
 
         Accounts accounts = new Accounts();
         Account account = new Account();
-        account.setExtNumber(subCustomer.getAccount());
+        account.setExtNumber(branch.getAccount());
         account.setCcy(CCY);
         account.setRole("Current");
         account.setAcctRoleInContract("Current");
@@ -184,7 +189,7 @@ public class CorporateCustomer {
         return response.getSpecific().getAdmin().getContract().getRid();
     }
 
-
+    @Override
     public Long generateRtpRequestForCommonContract(String departmentId, String contractRid, String headerRequestorInitiatorRid) throws Exception {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         Request request = new Request();
@@ -224,33 +229,23 @@ public class CorporateCustomer {
         return null;
     }
 
-
-    public TerminalResponse createTerminal(Term term, String headerRequestorInitiatorRid) throws Exception {
+    @Override
+    public TerminalResponse createTerminal(POS POS, String headerRequestorInitiatorRid) throws Exception {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        String terminalName = term.getTerminalName();
-        Request request = new Request();
-        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-        request.setKind("Udt");
-        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
-        request.setUdtType("KeyGeneration");
-        String xmlBody = init.jaxbProcessor.marshallToXml(request);
-        Response responseKeyGeneration = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
-
-        String keyId = responseKeyGeneration.getUserAttrs().getParamValue().get(0).getVal().getValue();
-        String keyVal = responseKeyGeneration.getUserAttrs().getParamValue().get(1).getVal().getValue();
-        String kcv = responseKeyGeneration.getUserAttrs().getParamValue().get(2).getVal().getValue();
-        ReferenceId referenceId = new ReferenceId(util);
+        KeyGenerator keyGenerator = new KeyGenerator(util);
+        String terminalName = POS.getTerminalName();
+        ExtIdGenerator extIdGenerator = new ExtIdGenerator(util);
         TerminalResponse terminalResponse = new TerminalResponse();
-        String customerId = term.getClientID();
-        String terminalRid = referenceId.getTerminalRid(headerRequestorInitiatorRid);
+        String customerId = POS.getClientID();
+        String terminalRid = extIdGenerator.getTerminalRid(headerRequestorInitiatorRid);
         if (terminalRid != null || customerId != null) {
-            Request req = new Request();
+            Request request = new Request();
             Request.Specific specific1 = new Request.Specific();
             Request.Specific.Admin admin1 = new Request.Specific.Admin();
-            req.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-            req.setKind(Constants.TRAN_KIND_MODIFY_TERMINAL);
-            req.setLifePhase(Constants.LIFE_PHASE_SINGLE);
-            req.setOriginatorInstId(1L);
+            request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+            request.setKind(Constants.TRAN_KIND_MODIFY_TERMINAL);
+            request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+            request.setOriginatorInstId(1L);
             admin1.setObjectMustExist(false);
             Terminal terminal = new Terminal();
             terminal.setName(terminalRid);
@@ -271,7 +266,7 @@ public class CorporateCustomer {
             terminal.setConfig(JAXConfigId);
 
             ObjectId contractObj = new ObjectId();
-            contractObj.setId(term.getContractId());
+            contractObj.setId(POS.getContractId());
             JAXBElement<ObjectId> jaxbElementContract = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Contract"), ObjectId.class, contractObj);
             terminal.setContract(jaxbElementContract);
 
@@ -295,8 +290,8 @@ public class CorporateCustomer {
             Terminal.Keys keys = new Terminal.Keys();
             DesKey desKey = new DesKey();
             DesKeyWithKek desKeyWithKek = new DesKeyWithKek();
-            desKey.setId(Long.valueOf(keyId));
-            desKeyWithKek.setId(Long.valueOf(keyId));
+            desKey.setId(Long.valueOf(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyId()));
+            desKeyWithKek.setId(Long.valueOf(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyId()));
 
             JAXBElement<DesKey> desKeyJAXBElement1 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Pmk"), DesKey.class, desKey);
             JAXBElement<DesKeyWithKek> desKeyJAXBElement2 = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Mmk"), DesKeyWithKek.class, desKeyWithKek);
@@ -310,8 +305,8 @@ public class CorporateCustomer {
 
             MailAddress mailAddress = new MailAddress();
             mailAddress.setCountryId(31L);
-            mailAddress.setCityTitle(term.getCity());
-            mailAddress.setStreetTitle(term.getAddress());
+            mailAddress.setCityTitle(POS.getCity());
+            mailAddress.setStreetTitle(POS.getAddress());
             JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Address"), MailAddress.class,
                     mailAddress);
 
@@ -319,8 +314,8 @@ public class CorporateCustomer {
             terminal.setAddress(jaxbElementAddress);
             admin1.setTerminal(terminal);
             specific1.setAdmin(admin1);
-            req.setSpecific(specific1);
-            String xml = init.jaxbProcessor.marshallToXml(req);
+            request.setSpecific(specific1);
+            String xml = init.jaxbProcessor.marshallToXml(request);
             Response response = init.callSOAP(xml, txParamsMap.get(Constants.RTP_URL));
             log.info(("tranId: " + response.getId()));
             terminalResponse.setTermRid(response.getSpecific().getAdmin().getTerminal().getName());
@@ -328,14 +323,14 @@ public class CorporateCustomer {
             terminalResponse.setId(String.valueOf(response.getSpecific().getAdmin().getTerminal().getId()));
             terminalResponse.setCode(SUCCESS_CODE_000);
             terminalResponse.setDescription(APPROVED_RESULT);
-            terminalResponse.setKcv(kcv);
-            terminalResponse.setKeyValue(keyVal);
+            terminalResponse.setKcv(keyGenerator.generateKey(headerRequestorInitiatorRid).getKcv());
+            terminalResponse.setKeyValue(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyVal());
             return terminalResponse;
         }
         return terminalResponse;
     }
 
-
+    @Override
     public SoftResponse activateStatusTerminal(String id, String headerRequestorInitiatorRid) throws Exception {
         SoftResponse softResponse = new SoftResponse();
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
@@ -371,6 +366,7 @@ public class CorporateCustomer {
         return softResponse;
     }
 
+    @Override
     public SoftResponse deactivateStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
         SoftResponse softResponse = new SoftResponse();
 
@@ -407,6 +403,7 @@ public class CorporateCustomer {
         return softResponse;
     }
 
+    @Override
     public TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
         TermStatusResponse terminalDetails = new TermStatusResponse();
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);

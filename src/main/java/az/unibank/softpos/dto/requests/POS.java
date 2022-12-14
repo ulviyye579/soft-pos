@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class Term {
+public class POS {
     @ApiModelProperty( example = "ZARA 28MAll")
     private String terminalName;
     @ApiModelProperty( example = "123456")

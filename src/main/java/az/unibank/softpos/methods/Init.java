@@ -1,4 +1,4 @@
-package az.unibank.softpos.service.methods;
+package az.unibank.softpos.methods;
 
 import az.unibank.softpos.exceptions.TransAxisException;
 import com.tranzaxis.schemas.tran.*;
@@ -20,7 +20,7 @@ public class Init {
     public final JaxbProcessor jaxbProcessor = JaxbProcessor.getInstance();
     public static final int STANDARD_TIMEOUT = 10000;
 
-    Response callSOAP(String body, String txUrl) throws Exception {
+    public Response callSOAP(String body, String txUrl) throws Exception {
         try {
             log.trace("Sending request to " + txUrl);
             URL url = new URL(txUrl);

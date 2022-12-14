@@ -1,8 +1,9 @@
 package az.unibank.softpos.controllers;
 
 import az.unibank.softpos.dto.requests.*;
+import az.unibank.softpos.dto.requests.Company;
 import az.unibank.softpos.dto.responses.*;
-import az.unibank.softpos.service.methods.CorporateCustomer;
+import az.unibank.softpos.service.CustomerCreator;
 import az.unibank.softpos.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,34 +18,34 @@ import javax.validation.Valid;
 @RequestMapping("/soft/pos")
 @RequiredArgsConstructor
 public class CustomerServiceController {
-    private final CorporateCustomer corporateCustomer;
 
+    private final CustomerCreator customerCreator;
 
     @PostMapping(value = "corporate-customer",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Company> createCustomer(@Valid @RequestBody CorpCustomer corpCustomer,
-                                                  @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
-        Company company = new Company();
+    public ResponseEntity<ResponseCustomer> createCustomer(@Valid @RequestBody Company modelCompany,
+                                                           @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
+        ResponseCustomer responseCustomer = new ResponseCustomer();
         try {
-            company = corporateCustomer.createCustomer(corpCustomer, headerRequestorInitiatorRid);
-            return ResponseEntity.ok(company);
+            responseCustomer = customerCreator.createCustomer(modelCompany, headerRequestorInitiatorRid);
+            return ResponseEntity.ok(responseCustomer);
         } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getLocalizedMessage());
-            company.setCode(Constants.DECLINED_CODE_001);
-            company.setDescription(ex.getLocalizedMessage());
-            return ResponseEntity.ok(company);
+            responseCustomer.setCode(Constants.DECLINED_CODE_001);
+            responseCustomer.setDescription(ex.getLocalizedMessage());
+            return ResponseEntity.ok(responseCustomer);
         }
 
     }
 
     @PostMapping(value = "corporate-customer/subcustomer",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CustomerResponse> createSubCustomer(@Valid @RequestBody SubCustomer subCustomer,
+    public ResponseEntity<CustomerResponse> createSubCustomer(@Valid @RequestBody Branch branch,
                                                               @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         CustomerResponse subcustomerResponse = new CustomerResponse();
         try {
-            subcustomerResponse = corporateCustomer.createSubCustomer(subCustomer, headerRequestorInitiatorRid);
+            subcustomerResponse = customerCreator.createSubCustomer(branch, headerRequestorInitiatorRid);
             return ResponseEntity.ok(subcustomerResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
@@ -56,11 +57,11 @@ public class CustomerServiceController {
 
     @PostMapping(value = "corporate-customer/terminal",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TerminalResponse> createTerminal(@Valid @RequestBody Term term,
+    public ResponseEntity<TerminalResponse> createTerminal(@Valid @RequestBody POS POS,
                                                            @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         TerminalResponse terminalResponse = new TerminalResponse();
         try {
-            terminalResponse = corporateCustomer.createTerminal(term, headerRequestorInitiatorRid);
+            terminalResponse = customerCreator.createTerminal(POS, headerRequestorInitiatorRid);
             return ResponseEntity.ok(terminalResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
@@ -77,7 +78,7 @@ public class CustomerServiceController {
         SoftResponse softResponse = new SoftResponse();
 
         try {
-            softResponse = corporateCustomer.activateStatusTerminal(id, headerRequestorInitiatorRid);
+            softResponse = customerCreator.activateStatusTerminal(id, headerRequestorInitiatorRid);
             return ResponseEntity.ok(softResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
@@ -97,7 +98,7 @@ public class CustomerServiceController {
         SoftResponse softResponse = new SoftResponse();
 
         try {
-            softResponse = corporateCustomer.deactivateStatusTerminal(id, headerRequestorInitiatorRid);
+            softResponse = customerCreator.deactivateStatusTerminal(id, headerRequestorInitiatorRid);
             return ResponseEntity.ok(softResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
@@ -115,7 +116,7 @@ public class CustomerServiceController {
         TermStatusResponse terminalDetails = new TermStatusResponse();
 
         try {
-            terminalDetails = corporateCustomer.getStatusTerminal(id, headerRequestorInitiatorRid);
+            terminalDetails = customerCreator.getStatusTerminal(id, headerRequestorInitiatorRid);
             return ResponseEntity.ok(terminalDetails);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());

@@ -1,4 +1,4 @@
-package az.unibank.softpos.service.methods;
+package az.unibank.softpos.methods;
 
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
@@ -23,7 +23,7 @@ import static az.unibank.softpos.utils.Constants.NS_SUBJECTS_ADMIN;
 @RequiredArgsConstructor
 @Service
 
-public class ReferenceId {
+public class ExtIdGenerator {
 
     Init init = new Init();
    private final Util util ;

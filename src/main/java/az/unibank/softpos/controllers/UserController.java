@@ -29,7 +29,7 @@ public class UserController {
     private final Util util;
 
     @PostMapping
-    public ResponseEntity<User> login(@RequestParam("user") String username, @RequestParam("password") String password) throws Exception {
+    public ResponseEntity<User> login(@RequestParam("user") String username, @RequestParam("password") String password) {
 
         if (!util.getUser().equals(username)) {
             return ResponseEntity.status(400).build();
@@ -37,7 +37,7 @@ public class UserController {
         try {
             String token = getJWTToken(username, password);
             User user = new User();
-            user.setUser(username);
+            user.setUsername(username);
             user.setToken(token);
             return ResponseEntity.ok(user);
         } catch (Exception ex) {
@@ -95,5 +95,4 @@ public class UserController {
             return ResponseEntity.ok(userToken);
         }
     }
-
 }

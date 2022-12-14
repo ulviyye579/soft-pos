@@ -3,7 +3,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class CorpCustomer {
+public class Company {
     @ApiModelProperty( example = "ZARA")
     private String companyName;
     @ApiModelProperty( example = "111111111")
