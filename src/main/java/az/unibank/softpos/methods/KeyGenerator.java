@@ -1,15 +1,16 @@
 package az.unibank.softpos.methods;
 
 import az.unibank.softpos.dto.responses.KeyValues;
+import az.unibank.softpos.exceptions.TransAxisException;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.tran.Request;
 import com.tranzaxis.schemas.tran.Response;
 
+import javax.xml.bind.JAXBException;
 import java.util.Map;
 
 public class KeyGenerator {
-    private Map<String, String> txParamsMap;
 
     Init init = new Init();
 
@@ -19,8 +20,8 @@ public class KeyGenerator {
         this.util = util;
     }
 
-    public KeyValues generateKey(String headerRequestorInitiatorRid) throws Exception {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+    public KeyValues generateKey(String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
+        Map<String, String> txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         KeyValues keyValues = new KeyValues();
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));

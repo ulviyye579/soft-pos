@@ -41,27 +41,27 @@ public class CustomerServiceController {
 
     @PostMapping(value = "corporate-customer/subcustomer",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CustomerResponse> createSubCustomer(@Valid @RequestBody Branch branch,
-                                                              @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
-        CustomerResponse subcustomerResponse = new CustomerResponse();
+    public ResponseEntity<SubCustomer> createSubCustomer(@Valid @RequestBody Branch branch,
+                                                         @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
+        SubCustomer subcustomerSub = new SubCustomer();
         try {
-            subcustomerResponse = customerCreator.createSubCustomer(branch, headerRequestorInitiatorRid);
-            return ResponseEntity.ok(subcustomerResponse);
+            subcustomerSub = customerCreator.createSubCustomer(branch, headerRequestorInitiatorRid);
+            return ResponseEntity.ok(subcustomerSub);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
-            subcustomerResponse.setResult(ex.getLocalizedMessage());
-            return ResponseEntity.ok(subcustomerResponse);
+            subcustomerSub.setResult(ex.getLocalizedMessage());
+            return ResponseEntity.ok(subcustomerSub);
         }
 
     }
 
     @PostMapping(value = "corporate-customer/terminal",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TerminalResponse> createTerminal(@Valid @RequestBody POS POS,
+    public ResponseEntity<TerminalResponse> createTerminal(@Valid @RequestBody POS pos,
                                                            @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         TerminalResponse terminalResponse = new TerminalResponse();
         try {
-            terminalResponse = customerCreator.createTerminal(POS, headerRequestorInitiatorRid);
+            terminalResponse = customerCreator.createTerminal(pos, headerRequestorInitiatorRid);
             return ResponseEntity.ok(terminalResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
@@ -78,7 +78,7 @@ public class CustomerServiceController {
         SoftResponse softResponse = new SoftResponse();
 
         try {
-            softResponse = customerCreator.activateStatusTerminal(id, headerRequestorInitiatorRid);
+            softResponse = customerCreator.changeStatusTerminal(id, headerRequestorInitiatorRid, Constants.ACTIVE_STATUS);
             return ResponseEntity.ok(softResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
@@ -93,12 +93,12 @@ public class CustomerServiceController {
 
     @PutMapping(value = "/corporate-customer/terminal/deactivation/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SoftResponse> deactivateTerminal(@PathVariable("id") Long id,
+    public ResponseEntity<SoftResponse> deactivateTerminal(@PathVariable("id") String id,
                                                            @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         SoftResponse softResponse = new SoftResponse();
 
         try {
-            softResponse = customerCreator.deactivateStatusTerminal(id, headerRequestorInitiatorRid);
+            softResponse = customerCreator.changeStatusTerminal(id, headerRequestorInitiatorRid, Constants.DEACTIVATED_STATUS);
             return ResponseEntity.ok(softResponse);
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());

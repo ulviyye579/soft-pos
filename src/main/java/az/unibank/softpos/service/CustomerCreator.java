@@ -4,21 +4,20 @@ import az.unibank.softpos.dto.requests.Company;
 import az.unibank.softpos.dto.requests.Branch;
 import az.unibank.softpos.dto.requests.POS;
 import az.unibank.softpos.dto.responses.*;
+import az.unibank.softpos.exceptions.TransAxisException;
+
+import javax.xml.bind.JAXBException;
 
 public interface CustomerCreator {
-    ResponseCustomer createCustomer(Company cust, String headerRequestorInitiatorRid) throws Exception;
+    ResponseCustomer createCustomer(Company company, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
 
-    CustomerResponse createSubCustomer(Branch subcust, String headerRequestorInitiatorRid) throws Exception;
+    SubCustomer createSubCustomer(Branch branch, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
 
-    String generateSettlementContractRequest(String departmentId, Branch branch, String headerRequestorInitiatorRid) throws Exception;
+    String generateSettlementContractRequest(String departmentId, Branch branch, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
 
-    Long generateRtpRequestForCommonContract(String departmentId, String contractRid, String headerRequestorInitiatorRid) throws Exception;
+    Long generateRtpRequestForCommonContract(String departmentId, String contractRid, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
 
-    TerminalResponse createTerminal(POS POS, String headerRequestorInitiatorRid) throws Exception;
-
-    SoftResponse activateStatusTerminal(String id, String headerRequestorInitiatorRid) throws Exception;
-
-    SoftResponse deactivateStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception;
-
-    TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception;
+    TerminalResponse createTerminal(POS pos, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
+    TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
+    SoftResponse changeStatusTerminal(String id, String headerRequestorInitiatorRid, String status) throws TransAxisException, JAXBException;
 }

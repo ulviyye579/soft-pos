@@ -5,7 +5,7 @@ import az.unibank.softpos.dto.requests.Company;
 import az.unibank.softpos.dto.requests.Branch;
 import az.unibank.softpos.dto.requests.POS;
 import az.unibank.softpos.dto.responses.*;
-import az.unibank.softpos.methods.ExtIdGenerator;
+import az.unibank.softpos.exceptions.TransAxisException;
 import az.unibank.softpos.service.CustomerCreator;
 import az.unibank.softpos.methods.Init;
 import az.unibank.softpos.methods.KeyGenerator;
@@ -15,6 +15,7 @@ import com.tranzaxis.schemas.acquiring_admin.BranchId;
 import com.tranzaxis.schemas.acquiring_admin.DesKey;
 import com.tranzaxis.schemas.acquiring_admin.DesKeyWithKek;
 import com.tranzaxis.schemas.acquiring_admin.Terminal;
+import com.tranzaxis.schemas.common_types.ContactAddress;
 import com.tranzaxis.schemas.common_types.MailAddress;
 import com.tranzaxis.schemas.common_types.ObjectId;
 import com.tranzaxis.schemas.contracts_admin.Account;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
 import java.util.Map;
@@ -44,16 +46,17 @@ public class CorporateCustomer implements CustomerCreator {
 
     private final Util util;
     private Map<String, String> txParamsMap;
+    SoftResponse softResponse = new SoftResponse();
 
-@Override
-    public ResponseCustomer createCustomer(Company cust, String headerRequestorInitiatorRid) throws Exception {
+
+    @Override
+    public ResponseCustomer createCustomer(Company company, String headerRequestorInitiatorRid) throws TransAxisException {
         try {
-
             this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
             ExtIdGenerator extIdGenerator = new ExtIdGenerator(util);
             ResponseCustomer responseCustomer = new ResponseCustomer();
-            String title = TITLE_MERCHANT + cust.getCompanyName();
-            Person.SubjectDocuments subjectdocuments = new Person.SubjectDocuments();
+            String title = TITLE_MERCHANT + company.getCompanyName();
+            SubjectBase.SubjectDocuments subjectDocuments = new Person.SubjectDocuments();
             Request request = new Request();
             request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
             request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
@@ -63,21 +66,20 @@ public class CorporateCustomer implements CustomerCreator {
             Subject subject1 = new Subject();
             Corporation corp = new Corporation();
             corp.setTypeRid(TYPE_RID_CORPORATE);
-            JAXBElement<SubjectBase.SubjectDocuments> documentsJAXBElement = new JAXBElement<>(Constants.NS_SUBJECTS_ADMIN_QNAME, SubjectBase.SubjectDocuments.class, subjectdocuments);
+            JAXBElement<SubjectBase.SubjectDocuments> documentsJAXBElement = new JAXBElement<>(Constants.NS_SUBJECTS_ADMIN_QNAME, SubjectBase.SubjectDocuments.class, subjectDocuments);
             Document document = new Document();
             document.setTypeRid(TYPE_RID_DOC);
-            document.setRid(cust.getInnRid());
-            subjectdocuments.getDocument().add(document);
+            document.setRid(company.getInnRid());
+            subjectDocuments.getDocument().add(document);
             corp.setSubjectDocuments(documentsJAXBElement);
-            JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "Title"), String.class, title);
+            JAXBElement<String> jaxbElementTitle = new JAXBElement<>(NS_TITLE_QNAME, String.class, title);
             corp.setTitle(jaxbElementTitle);
             corp.setLatTitle(jaxbElementTitle);
             corp.setLegalTitle(jaxbElementTitle);
             corp.setShortTitle(jaxbElementTitle);
             com.tranzaxis.schemas.common_types.ContactAddress contactAddress = new com.tranzaxis.schemas.common_types.ContactAddress();
             contactAddress.setCountryId(COUNTRY_CODE);
-            JAXBElement<com.tranzaxis.schemas.common_types.ContactAddress> jaxbElementContactAddress = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "Address"), com.tranzaxis.schemas.common_types.ContactAddress.class,
-                    contactAddress);
+            JAXBElement<ContactAddress> jaxbElementContactAddress = new JAXBElement<>(NS_ADDRESS_QNAME, com.tranzaxis.schemas.common_types.ContactAddress.class, contactAddress);
             corp.setAddress(jaxbElementContactAddress);
             subject1.setCorporation(corp);
             admin.setSubject(subject1);
@@ -101,16 +103,16 @@ public class CorporateCustomer implements CustomerCreator {
             return responseCustomer;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception(e);
+            throw new TransAxisException(e);
         }
     }
 
     @Override
-    public CustomerResponse createSubCustomer(Branch subcust, String headerRequestorInitiatorRid) throws Exception {
-        ExtIdGenerator extIdGenerator = new ExtIdGenerator(util);
-        CustomerResponse customerResponse = new CustomerResponse();
+    public SubCustomer createSubCustomer(Branch branch, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        String title = TITLE_MERCHANT + subcust.getCompanyName();
+        ExtIdGenerator extIdGenerator = new ExtIdGenerator(util);
+        SubCustomer subCustomer = new SubCustomer();
+        String title = TITLE_MERCHANT + branch.getCompanyName();
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
         request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
@@ -120,16 +122,16 @@ public class CorporateCustomer implements CustomerCreator {
         Subject subject = new Subject();
         Department department = new Department();
         department.setTypeId(3L);
-        JAXBElement<Long> JAXInstID = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "InstId"), Long.class, 1L);
-        department.setInstId(JAXInstID);
-        JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "Title"), String.class, title);
+        JAXBElement<Long> jaxbElementInstID = new JAXBElement<>(NS_INST_QNAME, Long.class, 1L);
+        department.setInstId(jaxbElementInstID);
+        JAXBElement<String> jaxbElementTitle = new JAXBElement<>(NS_TITLE_QNAME, String.class, title);
         department.setTitle(jaxbElementTitle);
         department.setLatTitle(jaxbElementTitle);
         department.setLegalTitle(jaxbElementTitle);
         department.setShortTitle(jaxbElementTitle);
-        JAXBElement<Long> jaxbElementParentOrgId = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "ParentOrgId"), Long.class, Long.valueOf(subcust.getClientID()));
+        JAXBElement<Long> jaxbElementParentOrgId = new JAXBElement<>(NS_PARENT_QNAME, Long.class, Long.valueOf(branch.getClientID()));
         department.setParentOrgId(jaxbElementParentOrgId);
-        JAXBElement<Long> jaxbElementMccId = new JAXBElement<>(new QName(NS_SUBJECTS_ADMIN, "MccId"), Long.class, Long.valueOf(subcust.getMccCode()));
+        JAXBElement<Long> jaxbElementMccId = new JAXBElement<>(NS_MCC_QNAME, Long.class, Long.valueOf(branch.getMccCode()));
         department.setMccId(jaxbElementMccId);
         subject.setDepartment(department);
         admin.setSubject(subject);
@@ -141,20 +143,20 @@ public class CorporateCustomer implements CustomerCreator {
         if (response.getResult().equalsIgnoreCase(Constants.APPROVED_RESULT)) {
             String departmentId = response.getSpecific().getAdmin().getSubject().getDepartment().getId().toString();
             String externalId = extIdGenerator.setExternalId(Long.valueOf(departmentId), headerRequestorInitiatorRid);
-            String contractRid = generateSettlementContractRequest(departmentId, subcust, headerRequestorInitiatorRid);
+            String contractRid = generateSettlementContractRequest(departmentId, branch, headerRequestorInitiatorRid);
             if (!contractRid.isEmpty()) {
                 Long contractId = generateRtpRequestForCommonContract(departmentId, contractRid, headerRequestorInitiatorRid);
-                customerResponse.setMerchantId(departmentId);
-                customerResponse.setContractId(contractId.toString());
-                customerResponse.setExternalId(externalId);
-                customerResponse.setResult(APPROVED_RESULT);
+                subCustomer.setMerchantId(departmentId);
+                subCustomer.setContractId(contractId.toString());
+                subCustomer.setExternalId(externalId);
+                subCustomer.setResult(APPROVED_RESULT);
             }
         }
-        return customerResponse;
+        return subCustomer;
     }
 
     @Override
-    public String generateSettlementContractRequest(String departmentId, Branch branch, String headerRequestorInitiatorRid) throws Exception {
+    public String generateSettlementContractRequest(String departmentId, Branch branch, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
@@ -163,9 +165,9 @@ public class CorporateCustomer implements CustomerCreator {
         Request.Specific specific = new Request.Specific();
         Request.Specific.Admin admin = new Request.Specific.Admin();
         Contract contract = new Contract();
-        JAXBElement<Long> jaxbElementBranchId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "BranchId"), Long.class, 21L);
+        JAXBElement<Long> jaxbElementBranchId = new JAXBElement<>(NS_BRANCH_QNAME, Long.class, BRANCH_ID);
         contract.setBranchId(jaxbElementBranchId);
-        JAXBElement<Long> jaxbElementTypeId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "TypeId"), Long.class, 344L);
+        JAXBElement<Long> jaxbElementTypeId = new JAXBElement<>(NS_TYPE_QNAME, Long.class, TYPE_SETTLEMENT_CONTRACT);
         contract.setTypeId(jaxbElementTypeId);
         contract.setClientId(Long.valueOf(departmentId));
         contract.setStatus("A");
@@ -190,7 +192,7 @@ public class CorporateCustomer implements CustomerCreator {
     }
 
     @Override
-    public Long generateRtpRequestForCommonContract(String departmentId, String contractRid, String headerRequestorInitiatorRid) throws Exception {
+    public Long generateRtpRequestForCommonContract(String departmentId, String contractRid, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         Request request = new Request();
         Request.Specific specific = new Request.Specific();
@@ -201,11 +203,9 @@ public class CorporateCustomer implements CustomerCreator {
         Contract contract = new Contract();
         contract.setInstId(1L);
 
-        JAXBElement<Long> jaxbBranchId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "BranchId"), Long.class,
-                BRANCH_ID);
-        contract.setBranchId(jaxbBranchId);
-        JAXBElement<Long> jaxbTypeId = new JAXBElement<>(new QName(NS_CONTRACTS_ADMIN, "TypeId"), Long.class,
-                TYPE_ID);
+        JAXBElement<Long> jaxbElementBranchId = new JAXBElement<>(NS_BRANCH_QNAME, Long.class, 81L);
+        contract.setBranchId(jaxbElementBranchId);
+        JAXBElement<Long> jaxbTypeId = new JAXBElement<>(NS_TYPE_QNAME, Long.class, TYPE_ID);
         contract.setTypeId(jaxbTypeId);
         contract.setClientId(Long.valueOf(departmentId));
         contract.setStatus("A");
@@ -222,21 +222,20 @@ public class CorporateCustomer implements CustomerCreator {
         request.setSpecific(specific);
         String requestCont = init.jaxbProcessor.marshallToXml(request);
         Response commonResponse = init.callSOAP(requestCont, txParamsMap.get(Constants.RTP_URL));
-        if (commonResponse.getResult().equalsIgnoreCase("Approved")) {
+        if (commonResponse.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
             return commonResponse.getSpecific().getAdmin().getContract().getId();
         }
-
         return null;
     }
 
     @Override
-    public TerminalResponse createTerminal(POS POS, String headerRequestorInitiatorRid) throws Exception {
+    public TerminalResponse createTerminal(POS pos, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         KeyGenerator keyGenerator = new KeyGenerator(util);
-        String terminalName = POS.getTerminalName();
+        String terminalName = pos.getTerminalName();
         ExtIdGenerator extIdGenerator = new ExtIdGenerator(util);
         TerminalResponse terminalResponse = new TerminalResponse();
-        String customerId = POS.getClientID();
+        String customerId = pos.getClientID();
         String terminalRid = extIdGenerator.getTerminalRid(headerRequestorInitiatorRid);
         if (terminalRid != null || customerId != null) {
             Request request = new Request();
@@ -250,40 +249,39 @@ public class CorporateCustomer implements CustomerCreator {
             Terminal terminal = new Terminal();
             terminal.setName(terminalRid);
             terminal.setTermType("Pos");
-            JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "ExternalRid"), String.class, terminalRid);
+            JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(NS_EXTERNAL_QNAME, String.class, terminalRid);
             terminal.setExternalRid(jaxbElementExternalRid);
             terminal.setStatus("N");
-            JAXBElement<String> jaxbElementTitle = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Title"), String.class, terminalName);
+            JAXBElement<String> jaxbElementTitle = new JAXBElement<>(NS_TITLE_QNAME, String.class, terminalName);
             terminal.setTitle(jaxbElementTitle);
 
             BranchId branchId = new BranchId();
             branchId.setId(21L);
-            JAXBElement<BranchId> jaxbElementBranch = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Branch"), BranchId.class, branchId);
+            JAXBElement<BranchId> jaxbElementBranch = new JAXBElement<>(NS_BRANCH_QNAME, BranchId.class, branchId);
             terminal.setBranch(jaxbElementBranch);
             ObjectId objectId = new ObjectId();
             objectId.setId(21L);
-            JAXBElement<ObjectId> JAXConfigId = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Config"), ObjectId.class, objectId);
-            terminal.setConfig(JAXConfigId);
+            JAXBElement<ObjectId> jaxbElementConfig = new JAXBElement<>(NS_CONFIG_QNAME, ObjectId.class, objectId);
+            terminal.setConfig(jaxbElementConfig);
 
             ObjectId contractObj = new ObjectId();
-            contractObj.setId(POS.getContractId());
-            JAXBElement<ObjectId> jaxbElementContract = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Contract"), ObjectId.class, contractObj);
+            contractObj.setId(pos.getContractId());
+            JAXBElement<ObjectId> jaxbElementContract = new JAXBElement<>(NS_CONTRACT_QNAME, ObjectId.class, contractObj);
             terminal.setContract(jaxbElementContract);
 
             ObjectId obj2 = new ObjectId();
             obj2.setId(610L);
-            JAXBElement<ObjectId> jaxbElementRiskProfile = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "RiskProfile"), ObjectId.class, obj2);
+            JAXBElement<ObjectId> jaxbElementRiskProfile = new JAXBElement<>(NS_RISK_PROFILE_QNAME, ObjectId.class, obj2);
             terminal.setRiskProfile(jaxbElementRiskProfile);
 
 
             ObjectId objectId1 = new ObjectId();
 
             objectId1.setId(221L);
-            JAXBElement<ObjectId> jaxbElementSettingsId = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Settings"), ObjectId.class, objectId1);
+            JAXBElement<ObjectId> jaxbElementSettingsId = new JAXBElement<>(NS_SETTINGS_QNAME, ObjectId.class, objectId1);
             terminal.setSettings(jaxbElementSettingsId);
 
-            JAXBElement<String> jaxbElementTraceProfile = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "TraceProfile"), String.class,
-                    "Warning");
+            JAXBElement<String> jaxbElementTraceProfile = new JAXBElement<>(NS_TRACE_PROFILE_QNAME, String.class, TRACE_PROFILE);
             terminal.setTraceProfile(jaxbElementTraceProfile);
 
 
@@ -305,10 +303,9 @@ public class CorporateCustomer implements CustomerCreator {
 
             MailAddress mailAddress = new MailAddress();
             mailAddress.setCountryId(31L);
-            mailAddress.setCityTitle(POS.getCity());
-            mailAddress.setStreetTitle(POS.getAddress());
-            JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(new QName(NS_ACQUIRING_ADMIN, "Address"), MailAddress.class,
-                    mailAddress);
+            mailAddress.setCityTitle(pos.getCity());
+            mailAddress.setStreetTitle(pos.getAddress());
+            JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(NS_ADDRESS_QNAME, MailAddress.class, mailAddress);
 
 
             terminal.setAddress(jaxbElementAddress);
@@ -331,8 +328,7 @@ public class CorporateCustomer implements CustomerCreator {
     }
 
     @Override
-    public SoftResponse activateStatusTerminal(String id, String headerRequestorInitiatorRid) throws Exception {
-        SoftResponse softResponse = new SoftResponse();
+    public SoftResponse changeStatusTerminal(String id, String headerRequestorInitiatorRid, String status) throws TransAxisException, JAXBException {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
@@ -344,14 +340,13 @@ public class CorporateCustomer implements CustomerCreator {
         admin.setObjectMustExist(true);
         Terminal terminal = new Terminal();
         terminal.setId(Long.valueOf(id));
-        terminal.setStatus("A");
+        terminal.setStatus(status);
 
         admin.setTerminal(terminal);
         specific.setAdmin(admin);
         request.setSpecific(specific);
         tranInvoke.setRequest(request);
-        StringWriter sw = new StringWriter();
-        String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
+        String xmlBody = init.jaxbProcessor.marshallToXml(request);
         Response response = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
         if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
             softResponse.setId(Constants.SUCCESS_CODE_000);
@@ -361,52 +356,15 @@ public class CorporateCustomer implements CustomerCreator {
             softResponse.setId(Constants.DECLINED_CODE_001);
             softResponse.setResult(Boolean.FALSE);
             softResponse.setMessage("Failed");
-
         }
         return softResponse;
     }
 
-    @Override
-    public SoftResponse deactivateStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
-        SoftResponse softResponse = new SoftResponse();
 
+    @Override
+    public TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        TranInvoke tranInvoke = new TranInvoke();
-        Request request = new Request();
-        Request.Specific specific = new Request.Specific();
-        Request.Specific.Admin admin = new Request.Specific.Admin();
-        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-        request.setKind(Constants.TRAN_KIND_MODIFY_TERMINAL);
-        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
-        admin.setObjectMustExist(true);
-        Terminal terminal = new Terminal();
-        terminal.setId(id);
-        terminal.setStatus("C");
-
-        admin.setTerminal(terminal);
-        specific.setAdmin(admin);
-        request.setSpecific(specific);
-        tranInvoke.setRequest(request);
-        StringWriter sw = new StringWriter();
-        String xmlBody = init.jaxbProcessor.toXml(sw, tranInvoke);
-        Response response = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
-        if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
-            softResponse.setId(Constants.SUCCESS_CODE_000);
-            softResponse.setResult(Boolean.TRUE);
-            softResponse.setMessage(Constants.APPROVED_RESULT);
-        } else {
-            softResponse.setId(Constants.DECLINED_CODE_001);
-            softResponse.setResult(Boolean.FALSE);
-            softResponse.setMessage("Failed");
-
-        }
-        return softResponse;
-    }
-
-    @Override
-    public TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws Exception {
         TermStatusResponse terminalDetails = new TermStatusResponse();
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
         Request.Specific specific = new Request.Specific();
@@ -428,16 +386,16 @@ public class CorporateCustomer implements CustomerCreator {
             String status = response.getSpecific().getAdmin().getTerminal().getStatus();
             switch (status) {
                 case "N":
-                    terminalDetails.setStatus("New");
+                    terminalDetails.setStatus(TERMINAL_NEW_STATUS);
                     break;
                 case "A":
-                    terminalDetails.setStatus("Active");
+                    terminalDetails.setStatus(TERMINAL_ACTIVE_STATUS);
                     break;
                 case "B":
-                    terminalDetails.setStatus("Blocked");
+                    terminalDetails.setStatus(TERMINAL_BLOCKED_STATUS);
                     break;
                 case "C":
-                    terminalDetails.setStatus("Closed");
+                    terminalDetails.setStatus(TERMINAL_CLOSED_STATUS);
                     break;
                 default:
                     terminalDetails.setStatus(status);

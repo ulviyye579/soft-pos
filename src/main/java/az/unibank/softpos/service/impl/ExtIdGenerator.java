@@ -1,5 +1,8 @@
-package az.unibank.softpos.methods;
+package az.unibank.softpos.service.impl;
 
+import az.unibank.softpos.exceptions.TransAxisException;
+import az.unibank.softpos.methods.Init;
+import az.unibank.softpos.service.ExternalIdGenerator;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.subjects_admin.Corporation;
@@ -12,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
 import java.util.Map;
@@ -23,25 +27,26 @@ import static az.unibank.softpos.utils.Constants.NS_SUBJECTS_ADMIN;
 @RequiredArgsConstructor
 @Service
 
-public class ExtIdGenerator {
+public class ExtIdGenerator implements ExternalIdGenerator {
 
     Init init = new Init();
-   private final Util util ;
+    private final Util util ;
     private Map<String, String> txParamsMap;
 
-    public String setExternalId(Long clientId, String headerRequestorInitiatorRid) throws Exception {
+    @Override
+    public String setExternalId(Long clientId, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         TranInvoke tranInvoke = new TranInvoke();
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         String externalId = "UP" + clientId;
-        Request RTP_Request = new Request();
-        RTP_Request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-        RTP_Request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
-        RTP_Request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        Request rtpRequest = new Request();
+        rtpRequest.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        rtpRequest.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
+        rtpRequest.setLifePhase(Constants.LIFE_PHASE_SINGLE);
         Request.Parties parties = new Request.Parties();
         Request.Parties.Party party = new Request.Parties.Party();
         party.setId(clientId);
         parties.setParty(party);
-        RTP_Request.setParties(parties);
+        rtpRequest.setParties(parties);
         Request.Specific specific = new Request.Specific();
         Request.Specific.Admin admin = new Request.Specific.Admin();
         admin.setObjectMustExist(true);
@@ -52,8 +57,8 @@ public class ExtIdGenerator {
         subject.setCorporation(corporation);
         admin.setSubject(subject);
         specific.setAdmin(admin);
-        RTP_Request.setSpecific(specific);
-        tranInvoke.setRequest(RTP_Request);
+        rtpRequest.setSpecific(specific);
+        tranInvoke.setRequest(rtpRequest);
         StringWriter sw = new StringWriter();
         String request = init.jaxbProcessor.toXml(sw, tranInvoke);
         log.trace("request: " + request);
@@ -64,7 +69,8 @@ public class ExtIdGenerator {
         return null;
     }
 
-    public String getTerminalRid(String headerRequestorInitiatorRid) throws Exception {
+    @Override
+    public String getTerminalRid(String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
         String termRid = null;
         this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();

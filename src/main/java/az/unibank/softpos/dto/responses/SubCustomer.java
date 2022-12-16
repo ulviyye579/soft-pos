@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CustomerResponse {
+public class SubCustomer {
 
     private String merchantId;
     private String contractId;

@@ -1,5 +1,6 @@
 package az.unibank.softpos.methods;
 
+import az.unibank.softpos.exceptions.TransAxisException;
 import az.unibank.softpos.utils.Constants;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.common_types.ParamValues;
@@ -102,7 +103,7 @@ public class JaxbProcessor {
     }
 
 
-    public String toXml(Writer writer, Object jaxbObj) throws JAXBException {
+    public String toXml(Writer writer, Object jaxbObj) throws TransAxisException, JAXBException {
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.marshal(jaxbObj, writer);
         return writer.toString();

@@ -20,7 +20,7 @@ public class Init {
     public final JaxbProcessor jaxbProcessor = JaxbProcessor.getInstance();
     public static final int STANDARD_TIMEOUT = 10000;
 
-    public Response callSOAP(String body, String txUrl) throws Exception {
+    public Response callSOAP(String body, String txUrl) throws TransAxisException {
         try {
             log.trace("Sending request to " + txUrl);
             URL url = new URL(txUrl);

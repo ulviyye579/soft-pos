@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TermStatusResponse {
 
-    private  String terminalRid;
+    private String terminalRid;
     private String status;
     private String code;
     private String terminalName;
