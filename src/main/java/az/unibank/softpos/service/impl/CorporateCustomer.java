@@ -43,7 +43,6 @@ import static az.unibank.softpos.utils.Constants.*;
 @Service
 public class CorporateCustomer implements CustomerCreator {
     Init init = new Init();
-
     private final Util util;
     private Map<String, String> txParamsMap;
     SoftResponse softResponse = new SoftResponse();
@@ -99,7 +98,6 @@ public class CorporateCustomer implements CustomerCreator {
                 responseCustomer.setCode(DECLINED_CODE_001);
                 responseCustomer.setDescription(response.getResult() + ", " + response.getDeclineReason());
             }
-
             return responseCustomer;
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,14 +168,14 @@ public class CorporateCustomer implements CustomerCreator {
         JAXBElement<Long> jaxbElementTypeId = new JAXBElement<>(NS_TYPE_QNAME, Long.class, TYPE_SETTLEMENT_CONTRACT);
         contract.setTypeId(jaxbElementTypeId);
         contract.setClientId(Long.valueOf(departmentId));
-        contract.setStatus("A");
+        contract.setStatus(ACTIVE_STATUS);
 
         Accounts accounts = new Accounts();
         Account account = new Account();
         account.setExtNumber(branch.getAccount());
         account.setCcy(CCY);
-        account.setRole("Current");
-        account.setAcctRoleInContract("Current");
+        account.setRole(ROLE_CONTRACT);
+        account.setAcctRoleInContract(ROLE_CONTRACT);
         accounts.getAccount().add(account);
         contract.setAccounts(accounts);
 

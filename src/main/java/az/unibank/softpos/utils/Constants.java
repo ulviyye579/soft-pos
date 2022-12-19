@@ -52,6 +52,7 @@ public class Constants {
     public static final QName NS_TRACE_PROFILE_QNAME = new QName(NS_ACQUIRING_ADMIN, "TraceProfile");
     public static final QName NS_ADDRESS_QNAME = new QName(NS_SUBJECTS_ADMIN, "Address");
     public static final String ACTIVE_STATUS = "A";
+    public static final String ROLE_CONTRACT = "Current";
     public static final String DEACTIVATED_STATUS = "C";
     public static final String TERMINAL_NEW_STATUS = "New";
     public static final String TERMINAL_ACTIVE_STATUS = "Active";
