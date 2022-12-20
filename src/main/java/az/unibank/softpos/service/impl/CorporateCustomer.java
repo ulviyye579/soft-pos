@@ -201,7 +201,7 @@ public class CorporateCustomer implements CustomerCreator {
         Contract contract = new Contract();
         contract.setInstId(1L);
 
-        JAXBElement<Long> jaxbElementBranchId = new JAXBElement<>(NS_BRANCH_QNAME, Long.class, 81L);
+        JAXBElement<Long> jaxbElementBranchId = new JAXBElement<>(NS_BRANCH_QNAME, Long.class, BRANCH_ID);
         contract.setBranchId(jaxbElementBranchId);
         JAXBElement<Long> jaxbTypeId = new JAXBElement<>(NS_TYPE_QNAME, Long.class, TYPE_ID);
         contract.setTypeId(jaxbTypeId);
@@ -216,7 +216,6 @@ public class CorporateCustomer implements CustomerCreator {
         contract.setOutLinks(outLinks);
         admin.setContract(contract);
         specific.setAdmin(admin);
-        request.setSpecific(specific);
         request.setSpecific(specific);
         String requestCont = init.jaxbProcessor.marshallToXml(request);
         Response commonResponse = init.callSOAP(requestCont, txParamsMap.get(Constants.RTP_URL));
