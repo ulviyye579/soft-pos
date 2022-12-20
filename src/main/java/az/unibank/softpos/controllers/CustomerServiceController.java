@@ -36,7 +36,6 @@ public class CustomerServiceController {
             responseCustomer.setDescription(ex.getLocalizedMessage());
             return ResponseEntity.ok(responseCustomer);
         }
-
     }
 
     @PostMapping(value = "corporate-customer/subcustomer",
@@ -52,7 +51,6 @@ public class CustomerServiceController {
             subcustomerSub.setResult(ex.getLocalizedMessage());
             return ResponseEntity.ok(subcustomerSub);
         }
-
     }
 
     @PostMapping(value = "corporate-customer/terminal",
@@ -70,7 +68,6 @@ public class CustomerServiceController {
         }
     }
 
-
     @PutMapping(value = "/corporate-customer/terminal/activation/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponse> activateTerminal(@PathVariable("id") String id,
@@ -87,7 +84,6 @@ public class CustomerServiceController {
             softResponse.setMessage(ex.getLocalizedMessage());
             return ResponseEntity.ok(softResponse);
         }
-
     }
 
 
