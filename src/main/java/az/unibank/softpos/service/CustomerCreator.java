@@ -20,4 +20,6 @@ public interface CustomerCreator {
     TerminalResponse createTerminal(POS pos, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
     TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
     SoftResponse changeStatusTerminal(String id, String headerRequestorInitiatorRid, String status) throws TransAxisException, JAXBException;
+
+    SoftResponse deleteTerminal(String id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
 }

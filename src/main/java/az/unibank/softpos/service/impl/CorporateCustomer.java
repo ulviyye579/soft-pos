@@ -245,7 +245,7 @@ public class CorporateCustomer implements CustomerCreator {
             admin1.setObjectMustExist(false);
             Terminal terminal = new Terminal();
             terminal.setName(terminalRid);
-            terminal.setTermType("Pos");
+            terminal.setTermType(TERMINAL_TYPE);
             JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(NS_EXTERNAL_QNAME, String.class, terminalRid);
             terminal.setExternalRid(jaxbElementExternalRid);
             terminal.setStatus("N");
@@ -253,11 +253,11 @@ public class CorporateCustomer implements CustomerCreator {
             terminal.setTitle(jaxbElementTitle);
 
             BranchId branchId = new BranchId();
-            branchId.setId(21L);
+            branchId.setId(BRANCH_ID);
             JAXBElement<BranchId> jaxbElementBranch = new JAXBElement<>(NS_BRANCH_QNAME, BranchId.class, branchId);
             terminal.setBranch(jaxbElementBranch);
             ObjectId objectId = new ObjectId();
-            objectId.setId(21L);
+            objectId.setId(CONFIG_ID);
             JAXBElement<ObjectId> jaxbElementConfig = new JAXBElement<>(NS_CONFIG_QNAME, ObjectId.class, objectId);
             terminal.setConfig(jaxbElementConfig);
 
@@ -267,14 +267,13 @@ public class CorporateCustomer implements CustomerCreator {
             terminal.setContract(jaxbElementContract);
 
             ObjectId obj2 = new ObjectId();
-            obj2.setId(610L);
+            obj2.setId(RISK_PROFILE_ID);
             JAXBElement<ObjectId> jaxbElementRiskProfile = new JAXBElement<>(NS_RISK_PROFILE_QNAME, ObjectId.class, obj2);
             terminal.setRiskProfile(jaxbElementRiskProfile);
 
 
             ObjectId objectId1 = new ObjectId();
-
-            objectId1.setId(221L);
+            objectId1.setId(SETTINGS_ID);
             JAXBElement<ObjectId> jaxbElementSettingsId = new JAXBElement<>(NS_SETTINGS_QNAME, ObjectId.class, objectId1);
             terminal.setSettings(jaxbElementSettingsId);
 
@@ -299,7 +298,7 @@ public class CorporateCustomer implements CustomerCreator {
 
 
             MailAddress mailAddress = new MailAddress();
-            mailAddress.setCountryId(31L);
+            mailAddress.setCountryId(COUNTRY_CODE);
             mailAddress.setCityTitle(pos.getCity());
             mailAddress.setStreetTitle(pos.getAddress());
             JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(NS_ADDRESS_QNAME, MailAddress.class, mailAddress);
@@ -402,6 +401,44 @@ public class CorporateCustomer implements CustomerCreator {
             terminalDetails.setTerminalName(response.getSpecific().getAdmin().getTerminal().getTitle().getValue());
         }
         return terminalDetails;
+    }
+
+    @Override
+    public SoftResponse deleteTerminal(String id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
+        String termStatus = getStatusTerminal(Long.valueOf(id), headerRequestorInitiatorRid).getStatus();
+        if (termStatus.equals(TERMINAL_NEW_STATUS)) {
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        TranInvoke tranInvoke = new TranInvoke();
+        Request request = new Request();
+        Request.Specific specific = new Request.Specific();
+        Request.Specific.Admin admin = new Request.Specific.Admin();
+        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        request.setKind("DeleteTerminal");
+        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        admin.setObjectMustExist(true);
+        Terminal term = new Terminal();
+        term.setId(Long.valueOf(id));
+        admin.setTerminal(term);
+        specific.setAdmin(admin);
+        request.setSpecific(specific);
+        tranInvoke.setRequest(request);
+        String xmlBody = init.jaxbProcessor.marshallToXml(request);
+        Response response = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
+        if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
+            softResponse.setId(Constants.SUCCESS_CODE_000);
+            softResponse.setResult(Boolean.TRUE);
+            softResponse.setMessage(Constants.APPROVED_RESULT);
+        } else {
+            softResponse.setId(Constants.DECLINED_CODE_001);
+            softResponse.setResult(Boolean.FALSE);
+            softResponse.setMessage("Such terminal was not found");
+        }
+        return softResponse;
+    }
+        softResponse.setId(Constants.DECLINED_CODE_001);
+        softResponse.setResult(Boolean.FALSE);
+        softResponse.setMessage("Can't deleted. Terminal had already activated");
+        return softResponse;
     }
 
 }

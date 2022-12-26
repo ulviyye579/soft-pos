@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.4.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>az.unibank</groupId>
     <artifactId>SoftPos</artifactId>
@@ -37,7 +37,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>az.unibank</groupId>
             <artifactId>rtp</artifactId>
@@ -75,7 +74,6 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Added later -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -127,11 +125,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web-services</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.json</groupId>-->
-<!--            <artifactId>json</artifactId>-->
-<!--            <version>20220924</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -154,7 +147,6 @@
             <artifactId>jaxb-core</artifactId>
             <version>2.3.0.1</version>
         </dependency>
-
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>

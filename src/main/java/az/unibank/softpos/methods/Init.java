@@ -14,11 +14,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import static az.unibank.softpos.utils.Constants.STANDARD_TIMEOUT;
+
 @Slf4j
 public class Init {
 
     public final JaxbProcessor jaxbProcessor = JaxbProcessor.getInstance();
-    public static final int STANDARD_TIMEOUT = 10000;
+
 
     public Response callSOAP(String body, String txUrl) throws TransAxisException {
         try {
@@ -29,7 +31,7 @@ public class Init {
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/xml");
             con.setRequestProperty("Accept", "*/*");
-            con.setReadTimeout(Init.STANDARD_TIMEOUT);
+            con.setReadTimeout(STANDARD_TIMEOUT);
 
             try (OutputStream os = con.getOutputStream()) {
                 byte[] input = body.getBytes(StandardCharsets.UTF_8);

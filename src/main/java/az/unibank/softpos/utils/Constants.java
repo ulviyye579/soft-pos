@@ -9,6 +9,8 @@ public class Constants {
     public static final String SUCCESS_CODE_000 = "000";
     public static final String DECLINED_CODE_001 = "001";
 
+    public static final int STANDARD_TIMEOUT = 10000;
+
     public static final String TYPE_RID_CORPORATE = "Corporation customer";
     public static final String TYPE_RID_DOC = "INN";
 
@@ -18,14 +20,17 @@ public class Constants {
 
     public static final Long CCY = 944L;
 
+    public static final String RTP_URL = "RTP_URL";
 
     public static final String LIFE_PHASE_SINGLE = "Single";
     public static final String INITIATOR_RID = "initiatorRid";
-
+    public static final String TERMINAL_TYPE = "Pos";
     public static final Long BRANCH_ID = 21L;
+    public static final Long CONFIG_ID = 21L;
     public static final Long TYPE_ID = 81L;
+    public static final Long RISK_PROFILE_ID = 610L;
     public static final Long TYPE_SETTLEMENT_CONTRACT = 344L;
-    public static final String RTP_URL = "RTP_URL";
+    public static final Long SETTINGS_ID = 221L;
 
     public static final String TRAN_KIND_MODIFY_SUBJECT = "ModifySubject";
     public static final String TRAN_KIND_MODIFY_CONTRACT = "ModifyContract";

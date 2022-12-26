@@ -120,4 +120,23 @@ public class CustomerServiceController {
             return ResponseEntity.ok(terminalDetails);
         }
     }
+
+
+    @PutMapping(value = "/corporate-customer/terminal/deletion/id/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SoftResponse> deleteTerminal(@PathVariable("id") String id,
+                                                           @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
+        SoftResponse softResponse = new SoftResponse();
+
+        try {
+            softResponse = customerCreator.deleteTerminal(id, headerRequestorInitiatorRid);
+            return ResponseEntity.ok(softResponse);
+        } catch (Exception ex) {
+            log.error(ex.getLocalizedMessage());
+            softResponse.setResult(Boolean.FALSE);
+            softResponse.setId(Constants.DECLINED_CODE_001);
+            softResponse.setMessage(ex.getLocalizedMessage());
+            return ResponseEntity.ok(softResponse);
+        }
+    }
 }
