@@ -149,8 +149,11 @@ public class CorporateCustomer implements CustomerCreator {
                 subCustomer.setExternalId(externalId);
                 subCustomer.setResult(APPROVED_RESULT);
             }
+            return subCustomer;
+        } else {
+            throw new TransAxisException(response.getResult() + ", " + response.getDeclineReason());
         }
-        return subCustomer;
+
     }
 
     @Override
@@ -302,7 +305,9 @@ public class CorporateCustomer implements CustomerCreator {
             mailAddress.setCityTitle(pos.getCity());
             mailAddress.setStreetTitle(pos.getAddress());
             JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(NS_ADDRESS_QNAME, MailAddress.class, mailAddress);
+            JAXBElement<String> jaxbElementNotes = new JAXBElement<>(NS_NOTES_QNAME, String.class,"mPOS_Device");
 
+            terminal.setNotes(jaxbElementNotes);
 
             terminal.setAddress(jaxbElementAddress);
             admin1.setTerminal(terminal);
@@ -407,34 +412,34 @@ public class CorporateCustomer implements CustomerCreator {
     public SoftResponse deleteTerminal(String id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         String termStatus = getStatusTerminal(Long.valueOf(id), headerRequestorInitiatorRid).getStatus();
         if (termStatus.equals(TERMINAL_NEW_STATUS)) {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        TranInvoke tranInvoke = new TranInvoke();
-        Request request = new Request();
-        Request.Specific specific = new Request.Specific();
-        Request.Specific.Admin admin = new Request.Specific.Admin();
-        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
-        request.setKind("DeleteTerminal");
-        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
-        admin.setObjectMustExist(true);
-        Terminal term = new Terminal();
-        term.setId(Long.valueOf(id));
-        admin.setTerminal(term);
-        specific.setAdmin(admin);
-        request.setSpecific(specific);
-        tranInvoke.setRequest(request);
-        String xmlBody = init.jaxbProcessor.marshallToXml(request);
-        Response response = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
-        if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
-            softResponse.setId(Constants.SUCCESS_CODE_000);
-            softResponse.setResult(Boolean.TRUE);
-            softResponse.setMessage(Constants.APPROVED_RESULT);
-        } else {
-            softResponse.setId(Constants.DECLINED_CODE_001);
-            softResponse.setResult(Boolean.FALSE);
-            softResponse.setMessage("Such terminal was not found");
+            this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+            TranInvoke tranInvoke = new TranInvoke();
+            Request request = new Request();
+            Request.Specific specific = new Request.Specific();
+            Request.Specific.Admin admin = new Request.Specific.Admin();
+            request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+            request.setKind("DeleteTerminal");
+            request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+            admin.setObjectMustExist(true);
+            Terminal term = new Terminal();
+            term.setId(Long.valueOf(id));
+            admin.setTerminal(term);
+            specific.setAdmin(admin);
+            request.setSpecific(specific);
+            tranInvoke.setRequest(request);
+            String xmlBody = init.jaxbProcessor.marshallToXml(request);
+            Response response = init.callSOAP(xmlBody, txParamsMap.get(Constants.RTP_URL));
+            if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
+                softResponse.setId(Constants.SUCCESS_CODE_000);
+                softResponse.setResult(Boolean.TRUE);
+                softResponse.setMessage(Constants.APPROVED_RESULT);
+            } else {
+                softResponse.setId(Constants.DECLINED_CODE_001);
+                softResponse.setResult(Boolean.FALSE);
+                softResponse.setMessage("Such terminal was not found");
+            }
+            return softResponse;
         }
-        return softResponse;
-    }
         softResponse.setId(Constants.DECLINED_CODE_001);
         softResponse.setResult(Boolean.FALSE);
         softResponse.setMessage("Can't deleted. Terminal had already activated");

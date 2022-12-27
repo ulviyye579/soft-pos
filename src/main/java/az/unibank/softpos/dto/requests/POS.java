@@ -1,7 +1,10 @@
 package az.unibank.softpos.dto.requests;
 
+import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotEmpty;
 
 @Data
 public class POS {

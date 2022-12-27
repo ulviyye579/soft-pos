@@ -40,9 +40,8 @@ public class Constants {
     public static final String NS_SUBJECTS_ADMIN = "http://schemas.tranzaxis.com/subjects-admin.xsd";
     public static final String NS_ACQUIRING_ADMIN = "http://schemas.tranzaxis.com/acquiring-admin.xsd";
     public static final QName NS_SUBJECTS_ADMIN_QNAME = new QName(Constants.NS_SUBJECTS_ADMIN, "SubjectDocuments");
+
     public static final String NS_TRAN_WSDL = "http://schemas.tranzaxis.com/tran.wsdl";
-
-
     public static final QName NS_TITLE_QNAME = new QName(Constants.NS_SUBJECTS_ADMIN, "Title");
     public static final QName NS_INST_QNAME = new QName(Constants.NS_SUBJECTS_ADMIN, "InstId");
     public static final QName NS_PARENT_QNAME = new QName(NS_SUBJECTS_ADMIN, "ParentOrgId");
@@ -50,6 +49,8 @@ public class Constants {
     public static final QName NS_TYPE_QNAME = new QName(NS_CONTRACTS_ADMIN, "TypeId");
     public static final QName NS_BRANCH_QNAME = new QName(NS_CONTRACTS_ADMIN, "BranchId");
     public static final QName NS_EXTERNAL_QNAME = new QName(NS_ACQUIRING_ADMIN, "ExternalRid");
+    public static final QName NS_NOTES_QNAME = new QName(NS_ACQUIRING_ADMIN, "Notes");
+
     public static final QName NS_CONFIG_QNAME = new QName(NS_ACQUIRING_ADMIN, "Config");
     public static final QName NS_CONTRACT_QNAME = new QName(NS_ACQUIRING_ADMIN, "Contract");
     public static final QName NS_RISK_PROFILE_QNAME = new QName(NS_ACQUIRING_ADMIN, "RiskProfile");
