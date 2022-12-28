@@ -43,3 +43,6 @@ management:
     port: 8080
   service:
     STANDARD_TIMEOUT: 10000
+server:
+  error:
+    include-message: always
