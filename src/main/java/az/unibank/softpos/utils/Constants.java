@@ -45,6 +45,7 @@ public class Constants {
     public static final QName NS_TITLE_QNAME = new QName(Constants.NS_SUBJECTS_ADMIN, "Title");
     public static final QName NS_INST_QNAME = new QName(Constants.NS_SUBJECTS_ADMIN, "InstId");
     public static final QName NS_PARENT_QNAME = new QName(NS_SUBJECTS_ADMIN, "ParentOrgId");
+    public static final QName NS_DEPARTMENT_RID = new QName(NS_SUBJECTS_ADMIN, "Rid");
     public static final QName NS_MCC_QNAME = new QName(NS_SUBJECTS_ADMIN, "MccId");
     public static final QName NS_TYPE_QNAME = new QName(NS_CONTRACTS_ADMIN, "TypeId");
     public static final QName NS_BRANCH_QNAME = new QName(NS_CONTRACTS_ADMIN, "BranchId");

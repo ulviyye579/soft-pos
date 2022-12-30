@@ -22,4 +22,8 @@ public interface CustomerCreator {
     SoftResponse changeStatusTerminal(String id, String headerRequestorInitiatorRid, String status) throws TransAxisException, JAXBException;
 
     SoftResponse deleteTerminal(String id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException;
+
+    SoftResponse changeMcc(String id, String headerRequestorInitiatorRid, String mccId) throws JAXBException, TransAxisException;
+
+//    SoftResponse changeAccount(SettlementContractDetails settlementContractDetails, String headerRequestorInitiatorRid) throws JAXBException, TransAxisException;
 }

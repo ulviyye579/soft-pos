@@ -28,7 +28,6 @@ import com.tranzaxis.schemas.tran.TranInvoke;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
@@ -100,7 +99,6 @@ public class CorporateCustomer implements CustomerCreator {
             }
             return responseCustomer;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new TransAxisException(e);
         }
     }
@@ -235,9 +233,8 @@ public class CorporateCustomer implements CustomerCreator {
         String terminalName = pos.getTerminalName();
         ExtIdGenerator extIdGenerator = new ExtIdGenerator(util);
         TerminalResponse terminalResponse = new TerminalResponse();
-        String customerId = pos.getClientID();
         String terminalRid = extIdGenerator.getTerminalRid(headerRequestorInitiatorRid);
-        if (terminalRid != null || customerId != null) {
+        if (terminalRid != null) {
             Request request = new Request();
             Request.Specific specific1 = new Request.Specific();
             Request.Specific.Admin admin1 = new Request.Specific.Admin();
@@ -265,7 +262,7 @@ public class CorporateCustomer implements CustomerCreator {
             terminal.setConfig(jaxbElementConfig);
 
             ObjectId contractObj = new ObjectId();
-            contractObj.setId(pos.getContractId());
+            contractObj.setId(Long.valueOf(pos.getContractId()));
             JAXBElement<ObjectId> jaxbElementContract = new JAXBElement<>(NS_CONTRACT_QNAME, ObjectId.class, contractObj);
             terminal.setContract(jaxbElementContract);
 
@@ -305,7 +302,7 @@ public class CorporateCustomer implements CustomerCreator {
             mailAddress.setCityTitle(pos.getCity());
             mailAddress.setStreetTitle(pos.getAddress());
             JAXBElement<MailAddress> jaxbElementAddress = new JAXBElement<>(NS_ADDRESS_QNAME, MailAddress.class, mailAddress);
-            JAXBElement<String> jaxbElementNotes = new JAXBElement<>(NS_NOTES_QNAME, String.class,"mPOS_Device");
+            JAXBElement<String> jaxbElementNotes = new JAXBElement<>(NS_NOTES_QNAME, String.class, "mPOS_Device");
 
             terminal.setNotes(jaxbElementNotes);
 
@@ -445,6 +442,41 @@ public class CorporateCustomer implements CustomerCreator {
         softResponse.setMessage("Can't deleted. Terminal had already activated");
         return softResponse;
     }
+
+    @Override
+    public SoftResponse changeMcc(String departmentId, String headerRequestorInitiatorRid, String mccId) throws JAXBException, TransAxisException {
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        Request request = new Request();
+        request.setInitiatorRid(txParamsMap.get(Constants.INITIATOR_RID));
+        request.setKind(Constants.TRAN_KIND_MODIFY_SUBJECT);
+        request.setLifePhase(Constants.LIFE_PHASE_SINGLE);
+        Request.Specific specific = new Request.Specific();
+        Request.Specific.Admin admin = new Request.Specific.Admin();
+        admin.setObjectMustExist(true);
+        Subject subject = new Subject();
+        Department department = new Department();
+        department.setId(Long.valueOf(departmentId));
+        JAXBElement<Long> jaxbElementMccId = new JAXBElement<>(NS_MCC_QNAME, Long.class, Long.valueOf(mccId));
+        department.setMccId(jaxbElementMccId);
+        subject.setDepartment(department);
+        admin.setSubject(subject);
+        specific.setAdmin(admin);
+        request.setSpecific(specific);
+        String requestBody = init.jaxbProcessor.marshallToXml(request);
+        Response response = init.callSOAP(requestBody, txParamsMap.get(Constants.RTP_URL));
+        response.getResult();
+        if (response.getResult().equalsIgnoreCase(APPROVED_RESULT)) {
+            softResponse.setId(Constants.SUCCESS_CODE_000);
+            softResponse.setResult(Boolean.TRUE);
+            softResponse.setMessage(Constants.APPROVED_RESULT);
+        } else {
+            softResponse.setId(Constants.DECLINED_CODE_001);
+            softResponse.setResult(Boolean.FALSE);
+            softResponse.setMessage("Failed");
+        }
+        return softResponse;
+    }
+
 
 }
 

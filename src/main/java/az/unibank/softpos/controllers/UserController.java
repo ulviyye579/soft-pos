@@ -69,7 +69,6 @@ public class UserController {
 
             return "SOFT_POS_" + token;
         } catch (Exception ex) {
-            ex.printStackTrace();
             log.error(ex.getLocalizedMessage());
         }
 
