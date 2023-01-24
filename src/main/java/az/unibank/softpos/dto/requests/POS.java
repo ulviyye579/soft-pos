@@ -20,7 +20,12 @@ public class POS {
     private String city;
 
     @NotEmpty
-    @ApiModelProperty (example = "17544563")
-    private String contractId;
+    @ApiModelProperty( example = "123456")
+    private String clientID;
 
+    @ApiModelProperty( example = "5732")
+    private String mccCode;
+
+    @ApiModelProperty( example = "AZ23789542632813440060AZN004")
+    private String account;
 }

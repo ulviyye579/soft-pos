@@ -26,7 +26,7 @@ public class CustomerServiceController {
     private final CustomerCreator customerCreator;
     SoftResponse softResponse = new SoftResponse();
     ResponseCustomer responseCustomer = new ResponseCustomer();
-    SubCustomer subcustomer = new SubCustomer();
+    BranchResponse subcustomer = new BranchResponse();
 
 
     @PostMapping(value = "corporate-customer",
@@ -43,8 +43,8 @@ public class CustomerServiceController {
 
     @PostMapping(value = "corporate-customer/subcustomer",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SubCustomer> createSubCustomer(@Valid @RequestBody Branch branch,
-                                                         @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
+    public ResponseEntity<BranchResponse> createSubCustomer(@Valid @RequestBody Branch branch,
+                                                            @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
         try {
             subcustomer = customerCreator.createSubCustomer(branch, headerRequestorInitiatorRid);
             return ResponseEntity.ok(subcustomer);
@@ -125,6 +125,19 @@ public class CustomerServiceController {
         try {
             softResponse = customerCreator.changeMcc(departmentId, headerRequestorInitiatorRid, mcc);
         return ResponseEntity.ok(softResponse);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
+    @PutMapping(value = "/corporate-customer/subcustomer/account",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SoftResponse> changeAccount(@Valid @RequestBody AccountChanges account,
+                                                 @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid)
+    throws JAXBException, TransAxisException {
+        try {
+            softResponse = customerCreator.changeAccountNumber( account, headerRequestorInitiatorRid);
+            return ResponseEntity.ok(softResponse);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }

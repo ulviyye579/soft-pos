@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SubCustomer {
+public class BranchResponse {
 
-    private Long commonContractId;
+    private String merchantId;
+    private String result;
     private String externalId;
-    private String settlementContractId;
 }
