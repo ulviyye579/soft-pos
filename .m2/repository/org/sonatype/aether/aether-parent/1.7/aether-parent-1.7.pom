@@ -88,9 +88,9 @@ See the Apache License Version 2.0 for the specific language governing permissio
   <modules>
     <module>aether-api</module>
     <module>aether-spi</module>
-    <module>aether-util</module>
+    <module>aether-utilV2</module>
     <module>aether-impl</module>
-    <module>aether-test-util</module>
+    <module>aether-test-utilV2</module>
     <module>aether-connector-file</module>
     <module>aether-connector-wagon</module>
   </modules>

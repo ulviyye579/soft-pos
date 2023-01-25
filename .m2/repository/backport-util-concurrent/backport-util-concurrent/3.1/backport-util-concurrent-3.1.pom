@@ -1,7 +1,7 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>backport-util-concurrent</groupId>
-    <artifactId>backport-util-concurrent</artifactId>
+    <groupId>backport-utilV2-concurrent</groupId>
+    <artifactId>backport-utilV2-concurrent</artifactId>
     <version>3.1</version>
     <packaging>jar</packaging>
     <name>Backport of JSR 166</name>
@@ -15,7 +15,7 @@
         </license>
     </licenses>
     <scm>
-        <url>svn://dcl.mathcs.emory.edu/software/harness2/trunk/util/backport-util-concurrent/</url>
+        <url>svn://dcl.mathcs.emory.edu/software/harness2/trunk/utilV2/backport-utilV2-concurrent/</url>
     </scm>
     <organization>
         <name>Dawid Kurzyniec</name>

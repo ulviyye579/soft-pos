@@ -97,7 +97,7 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>fest-util</artifactId>
+          <artifactId>fest-utilV2</artifactId>
           <groupId>org.easytesting</groupId>
         </exclusion>
       </exclusions>

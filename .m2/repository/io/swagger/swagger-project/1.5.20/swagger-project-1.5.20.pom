@@ -344,7 +344,7 @@
         <module>modules/swagger-jersey-jaxrs</module>
         <module>modules/swagger-hibernate-validations</module>
         <module>modules/swagger-servlet</module>
-        <!--module>modules/swagger-utils</module-->
+        <!--module>modules/swagger-utilsV2</module-->
         <!--module>modules/swagger-oauth2-auth-server</module-->
     </modules>
     <reporting>

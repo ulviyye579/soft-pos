@@ -89,7 +89,7 @@
       </dependency>
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-util</artifactId>
+        <artifactId>jetty-utilV2</artifactId>
         <version>${jetty.version}</version>
       </dependency>
       <dependency>

@@ -1,0 +1,72 @@
+package v1.az.unibank.softpos.utils;
+
+import v1.az.unibank.softpos.dtoV2.JwtToken;
+import com.google.gson.Gson;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import v1.az.unibank.softpos.utils.ConstantsV2;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author Ulviyya Musayeva
+ */
+
+@Slf4j
+@Getter
+@Setter
+@Component
+public class UtilV2 {
+
+    @Value("${application.endpointDefault}")
+    private String endpointDefault;
+
+    @Value("${application.initiatorRidDefault}")
+    private String initiatorRidDefault;
+
+    @Value("${request.user}")
+    private String user;
+
+    @Value("${request.timeout}")
+    private Long timeout;
+
+    @Value("${request.header}")
+    private String header;
+    @Value("${request.prefix}")
+    private String prefix;
+    @Value("${request.password}")
+    private String requestPassword;
+
+
+    public static String getDateTime() {
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
+        return formatter.format(date);
+    }
+
+
+    public Map<String, String> getTxParams(String httpHeaders) {
+        Map<String, String> txParamsHashMap = new HashMap<>();
+        try {
+            log.trace("requestor-inst-rid : " + httpHeaders);
+            txParamsHashMap.put(ConstantsV2.RTP_URL, endpointDefault);
+            txParamsHashMap.put(ConstantsV2.INITIATOR_RID, initiatorRidDefault);
+            log.trace("RTP parameters : " + txParamsHashMap);
+        } catch (Exception ex) {
+            txParamsHashMap.put(ConstantsV2.RTP_URL, endpointDefault);
+            txParamsHashMap.put(ConstantsV2.INITIATOR_RID, initiatorRidDefault);
+        }
+        return txParamsHashMap;
+    }
+
+public JwtToken unmarshal(String jsonString){
+    Gson g = new Gson();
+    return g.fromJson(jsonString, JwtToken.class);
+}
+}

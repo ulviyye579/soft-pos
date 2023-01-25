@@ -362,7 +362,7 @@ under the License.
       </dependency>
       <dependency>
         <groupId>org.apache.maven.resolver</groupId>
-        <artifactId>maven-resolver-util</artifactId>
+        <artifactId>maven-resolver-utilV2</artifactId>
         <version>${resolverVersion}</version>
       </dependency>
       <dependency>

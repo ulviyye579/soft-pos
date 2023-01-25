@@ -22,7 +22,7 @@ See the Apache License Version 2.0 for the specific language governing permissio
     <version>1.7</version>
   </parent>
 
-  <artifactId>aether-util</artifactId>
+  <artifactId>aether-utilV2</artifactId>
 
   <name>Aether :: Utilities</name>
   <description>
@@ -42,7 +42,7 @@ See the Apache License Version 2.0 for the specific language governing permissio
     </dependency>
     <dependency>
       <groupId>org.sonatype.aether</groupId>
-      <artifactId>aether-test-util</artifactId>
+      <artifactId>aether-test-utilV2</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

@@ -20,7 +20,7 @@
     <version>0.9.0.M2</version>
   </parent>
 
-  <artifactId>aether-util</artifactId>
+  <artifactId>aether-utilV2</artifactId>
 
   <name>Aether Utilities</name>
   <description>
@@ -28,7 +28,7 @@
   </description>
 
   <properties>
-    <bundle.symbolicName>org.eclipse.aether.util</bundle.symbolicName>
+    <bundle.symbolicName>org.eclipse.aether.utilV2</bundle.symbolicName>
   </properties>
 
   <dependencies>
@@ -38,7 +38,7 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-test-util</artifactId>
+      <artifactId>aether-test-utilV2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

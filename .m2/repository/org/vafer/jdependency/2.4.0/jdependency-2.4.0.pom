@@ -86,7 +86,7 @@
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
-      <artifactId>asm-util</artifactId>
+      <artifactId>asm-utilV2</artifactId>
       <version>${asm.version}</version>
     </dependency>
     <dependency>

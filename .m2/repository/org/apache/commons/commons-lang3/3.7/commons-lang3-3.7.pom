@@ -629,8 +629,8 @@
               <runOrder>random</runOrder>
             </configuration>
           </execution>
-          <!-- <execution> <id>security-manager-test</id> <phase>integration-test</phase> <goals> <goal>test</goal> </goals> <configuration>
-            <includes> <include>**/*Test.java</include> </includes> <argLine>-Djava.security.manager -Djava.security.policy=${basedir}/src/test/resources/java.policy</argLine>
+          <!-- <execution> <id>securityV2-manager-test</id> <phase>integration-test</phase> <goals> <goal>test</goal> </goals> <configuration>
+            <includes> <include>**/*Test.java</include> </includes> <argLine>-Djava.securityV2.manager -Djava.securityV2.policy=${basedir}/src/test/resources/java.policy</argLine>
             </configuration> </execution> -->
         </executions>
       </plugin>
@@ -833,7 +833,7 @@
         <jdk>9</jdk>
       </activation>
       <properties>
-        <!-- LANG-1265: allow tests to access private fields/methods of java.base classes via reflection -->
+        <!-- LANG-1265: allow tests to access private fields/methodsV2 of java.base classes via reflection -->
         <argLine>-Xmx512m --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
         <!-- versions below 3.0.0 do not work with java 9 -->
         <commons.javadoc.version>3.0.0-M1</commons.javadoc.version>

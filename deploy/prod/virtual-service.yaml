@@ -11,6 +11,6 @@ spec:
   http:
       route:
         - destination:
-            host: soft-pos-service.card-processing.svc.cluster.local
+            host: soft-pos-serviceV2.card-processing.svc.cluster.local
             port:
               number: 8080

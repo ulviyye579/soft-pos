@@ -167,7 +167,7 @@ See the Apache License Version 2.0 for the specific language governing permissio
           </executions>
         </plugin>
         <!--
-         | Make sure we only use Java5 methods
+         | Make sure we only use Java5 methodsV2
         -->
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>

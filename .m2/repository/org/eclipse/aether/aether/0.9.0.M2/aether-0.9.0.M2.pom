@@ -115,9 +115,9 @@
   <modules>
     <module>aether-api</module>
     <module>aether-spi</module>
-    <module>aether-util</module>
+    <module>aether-utilV2</module>
     <module>aether-impl</module>
-    <module>aether-test-util</module>
+    <module>aether-test-utilV2</module>
     <module>aether-connector-file</module>
     <module>aether-connector-wagon</module>
     <module>aether-connector-asynchttpclient</module>
@@ -145,7 +145,7 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.aether</groupId>
-        <artifactId>aether-util</artifactId>
+        <artifactId>aether-utilV2</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -170,7 +170,7 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.aether</groupId>
-        <artifactId>aether-test-util</artifactId>
+        <artifactId>aether-test-utilV2</artifactId>
         <version>${project.version}</version>
         <scope>test</scope>
       </dependency>
@@ -331,7 +331,7 @@
               </group>
               <group>
                 <title>Utilities</title>
-                <packages>org.eclipse.aether.util*</packages>
+                <packages>org.eclipse.aether.utilV2*</packages>
               </group>
               <group>
                 <title>Repository Connectors</title>

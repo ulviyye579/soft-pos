@@ -75,11 +75,11 @@
           <instructions>
             <Export-Package>
               !com.google.common.base.internal,
-              !com.google.common.util.concurrent.internal,
+              !com.google.common.utilV2.concurrent.internal,
               com.google.common.*
             </Export-Package>
             <Import-Package>
-              com.google.common.util.concurrent.internal,
+              com.google.common.utilV2.concurrent.internal,
               javax.annotation;resolution:=optional,
               javax.crypto.*;resolution:=optional,
               sun.misc.*;resolution:=optional

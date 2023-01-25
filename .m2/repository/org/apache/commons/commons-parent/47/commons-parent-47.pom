@@ -1118,7 +1118,7 @@
 
     <!--
       Runs the Animal Sniffer plugin to check that generated code does not included references
-      to methods/classes etc that are not present in the standard Java runtime for the defined target version.
+      to methodsV2/classes etc that are not present in the standard Java runtime for the defined target version.
       To bypass the checks, define "animal.sniffer.skip" as true, or create the file "src/site/resources/profile.noanimal"
     -->
 

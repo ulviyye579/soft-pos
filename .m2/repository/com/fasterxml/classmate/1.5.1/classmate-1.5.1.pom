@@ -42,7 +42,7 @@
 	<osgi.export>com.fasterxml.classmate;version=${project.version},
 com.fasterxml.classmate.*;version=${project.version}
 </osgi.export>
-	<osgi.private>com.fasterxml.classmate.util.*</osgi.private>
+	<osgi.private>com.fasterxml.classmate.utilV2.*</osgi.private>
 
 	<jdk.module.name>com.fasterxml.classmate</jdk.module.name>
     </properties>

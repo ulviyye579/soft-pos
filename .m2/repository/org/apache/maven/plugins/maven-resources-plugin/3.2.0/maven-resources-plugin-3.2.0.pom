@@ -122,7 +122,7 @@ under the License.
       <artifactId>maven-filtering</artifactId>
       <version>${mavenFilteringVersion}</version>
     </dependency>
-    <!-- Upgrade of transitive commons-io 2.4 of maven-shared-utils of maven-filtering. -->
+    <!-- Upgrade of transitive commons-io 2.4 of maven-shared-utilsV2 of maven-filtering. -->
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>

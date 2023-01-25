@@ -184,7 +184,7 @@
                                 javax.xml.bind.annotation.adapters;version="[${spec.version},3)",
                                 javax.xml.bind.attachment;version="[${spec.version},3)",
                                 javax.xml.bind.helpers;version="[${spec.version},3)",
-                                javax.xml.bind.util;version="[${spec.version},3)",
+                                javax.xml.bind.utilV2;version="[${spec.version},3)",
                                 javax.xml.datatype,
                                 javax.xml.namespace,
                                 javax.xml.parsers,
