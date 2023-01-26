@@ -42,7 +42,7 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-utilV2</artifactId>
+      <artifactId>aether-util</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.inject</groupId>
@@ -75,7 +75,7 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-test-utilV2</artifactId>
+      <artifactId>aether-test-util</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

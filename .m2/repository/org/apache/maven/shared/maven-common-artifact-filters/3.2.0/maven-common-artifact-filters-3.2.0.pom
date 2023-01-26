@@ -126,7 +126,7 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-utilV2</artifactId>
+      <artifactId>aether-util</artifactId>
       <version>${aether.version}</version>
     </dependency>
     <dependency>
@@ -142,7 +142,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
-      <artifactId>maven-resolver-utilV2</artifactId>
+      <artifactId>maven-resolver-util</artifactId>
       <version>1.4.2</version>
       <scope>provided</scope>
     </dependency>

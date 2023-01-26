@@ -216,7 +216,7 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>fest-utilV2</artifactId>
+          <artifactId>fest-util</artifactId>
           <groupId>org.easytesting</groupId>
         </exclusion>
       </exclusions>

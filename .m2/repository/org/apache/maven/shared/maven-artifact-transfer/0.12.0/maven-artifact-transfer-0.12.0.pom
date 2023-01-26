@@ -171,7 +171,7 @@
     </dependency>
     <dependency>
       <groupId>org.sonatype.aether</groupId>
-      <artifactId>aether-utilV2</artifactId>
+      <artifactId>aether-util</artifactId>
       <version>1.7</version>
       <scope>provided</scope>
     </dependency>
@@ -191,7 +191,7 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-utilV2</artifactId>
+      <artifactId>aether-util</artifactId>
       <version>0.9.0.M2</version>
       <scope>provided</scope>
     </dependency>

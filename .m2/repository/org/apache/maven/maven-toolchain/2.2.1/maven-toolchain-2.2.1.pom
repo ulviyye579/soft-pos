@@ -86,10 +86,10 @@ under the License.
               </artifactSet>
               <relocations>
                 <relocation>
-                  <pattern>org.codehaus.plexus.utilV2</pattern>
+                  <pattern>org.codehaus.plexus.util</pattern>
                   <excludes>
-                    <exclude>org.codehaus.plexus.utilV2.xml.Xpp3Dom</exclude>
-                    <exclude>org.codehaus.plexus.utilV2.xml.pull.*</exclude>
+                    <exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>
+                    <exclude>org.codehaus.plexus.util.xml.pull.*</exclude>
                   </excludes>
                 </relocation>
               </relocations>

@@ -389,7 +389,7 @@
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey.test-framework</groupId>
-                <artifactId>jersey-test-framework-utilV2</artifactId>
+                <artifactId>jersey-test-framework-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

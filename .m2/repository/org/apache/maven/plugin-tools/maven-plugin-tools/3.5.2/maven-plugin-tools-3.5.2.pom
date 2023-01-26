@@ -319,7 +319,7 @@
                 </group>
                 <group>
                   <title>Plugin Tools Extractor API</title>
-                  <packages>org.apache.maven.tools.plugin:org.apache.maven.tools.plugin.extractor:org.apache.maven.tools.plugin.scanner:org.apache.maven.tools.plugin.utilV2</packages>
+                  <packages>org.apache.maven.tools.plugin:org.apache.maven.tools.plugin.extractor:org.apache.maven.tools.plugin.scanner:org.apache.maven.tools.plugin.util</packages>
                 </group>
                 <group>
                   <title>Plugin Tools Generators</title>

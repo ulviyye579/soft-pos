@@ -423,12 +423,12 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-utilV2</artifactId>
+        <artifactId>jetty-util</artifactId>
         <version>9.4.35.v20201120</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-utilV2-ajax</artifactId>
+        <artifactId>jetty-util-ajax</artifactId>
         <version>9.4.35.v20201120</version>
       </dependency>
       <dependency>

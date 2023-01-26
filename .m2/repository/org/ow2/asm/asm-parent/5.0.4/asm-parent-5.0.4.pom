@@ -129,7 +129,7 @@
       </dependency>
 
       <dependency>
-        <artifactId>asm-utilV2</artifactId>
+        <artifactId>asm-util</artifactId>
         <groupId>${project.groupId}</groupId>
         <version>${project.version}</version>
       </dependency>

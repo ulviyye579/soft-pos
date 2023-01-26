@@ -279,7 +279,7 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.aether</groupId>
-        <artifactId>aether-utilV2</artifactId>
+        <artifactId>aether-util</artifactId>
         <version>${aetherVersion}</version>
       </dependency>
       <dependency>

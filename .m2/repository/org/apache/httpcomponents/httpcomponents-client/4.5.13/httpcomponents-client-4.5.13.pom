@@ -437,7 +437,7 @@
                 <artifactId>java16</artifactId>
                 <version>1.1</version>
               </signature>
-              <ignores>java.utilV2.concurrent.ConcurrentHashMap*</ignores>
+              <ignores>java.util.concurrent.ConcurrentHashMap*</ignores>
             </configuration>
           </plugin>
 

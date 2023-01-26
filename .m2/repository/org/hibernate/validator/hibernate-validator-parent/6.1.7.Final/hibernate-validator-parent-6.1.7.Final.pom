@@ -1250,10 +1250,10 @@
                     --add-opens=java.base/java.math=ALL-UNNAMED
                     --add-opens=java.base/java.io=ALL-UNNAMED
                     --add-opens=java.base/java.net=ALL-UNNAMED
-                    --add-opens=java.base/java.utilV2=ALL-UNNAMED
-                    --add-opens=java.base/java.utilV2.concurrent=ALL-UNNAMED
-                    --add-opens=java.base/java.utilV2.concurrent.atomic=ALL-UNNAMED
-                    --add-opens=java.base/java.utilV2.concurrent.locks=ALL-UNNAMED
+                    --add-opens=java.base/java.util=ALL-UNNAMED
+                    --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+                    --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+                    --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED
                     --add-opens=java.base/jdk.internal.reflect=ALL-UNNAMED
                     --add-opens=java.management/javax.management=ALL-UNNAMED
                     --add-opens=java.management/javax.management.openmbean=ALL-UNNAMED
