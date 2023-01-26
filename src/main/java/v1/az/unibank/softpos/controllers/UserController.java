@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class UserController {
     private final Util util;
 
-    @PostMapping({"/v1.1", "/v1.2"})
+    @PostMapping(value ="/v1.1")
     public ResponseEntity<User> login(@RequestParam("user") String username, @RequestParam("password") String password) {
 
         if (!util.getUser().equals(username)) {
@@ -75,7 +75,7 @@ public class UserController {
         return null;
     }
 
-    @GetMapping({"/v1.1/check/token/{token}", "/v1.2/check/token/{token}"})
+    @GetMapping(value ="/v1.1/check/token/{token}")
 //    @GetMapping(value = "/check/token/{token}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserToken> checkTokenV2(@PathVariable String token) {
         UserToken userToken = new UserToken();
