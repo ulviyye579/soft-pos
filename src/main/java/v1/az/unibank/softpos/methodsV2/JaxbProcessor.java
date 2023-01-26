@@ -1,12 +1,12 @@
 package v1.az.unibank.softpos.methodsV2;
 
 import v1.az.unibank.softpos.utils.ConstantsV2;
-import v1.az.unibank.softpos.utils.UtilV2;
 import com.tranzaxis.schemas.tran.Request;
 import com.tranzaxis.schemas.tran.TranInvoke;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
+import v1.az.unibank.softpos.utils.Util;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -42,17 +42,17 @@ public class JaxbProcessor {
 
     private JaxbProcessor() throws JAXBException {
 
-        log.info(UtilV2.getDateTime() + ": before Configuration config = new Configuration()");
+        log.info(Util.getDateTime() + ": before Configuration config = new Configuration()");
         Configuration config = new Configuration();
-        log.info(UtilV2.getDateTime() + ":  after Configuration config = new Configuration();");
+        log.info(Util.getDateTime() + ":  after Configuration config = new Configuration();");
 
-        log.info(UtilV2.getDateTime() + ":  before convention = new MappedNamespaceConvention(config);");
+        log.info(Util.getDateTime() + ":  before convention = new MappedNamespaceConvention(config);");
         convention = new MappedNamespaceConvention(config);
-        log.info(UtilV2.getDateTime() + ":  after convention = new MappedNamespaceConvention(config);");
+        log.info(Util.getDateTime() + ":  after convention = new MappedNamespaceConvention(config);");
 
-        log.info(UtilV2.getDateTime() + ":  before JAXBContext.newInstance(clazz);");
+        log.info(Util.getDateTime() + ":  before JAXBContext.newInstance(clazz);");
         jaxbContext = JAXBContext.newInstance(TranInvoke.class);
-        log.info(UtilV2.getDateTime() + ":  after JAXBContext.newInstance(clazz);");
+        log.info(Util.getDateTime() + ":  after JAXBContext.newInstance(clazz);");
 
     }
 

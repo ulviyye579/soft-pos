@@ -10,7 +10,6 @@ import v1.az.unibank.softpos.service.CustomerCreatorV2;
 import v1.az.unibank.softpos.methodsV2.Init;
 import v1.az.unibank.softpos.methodsV2.KeyGenerator;
 import v1.az.unibank.softpos.utils.ConstantsV2;
-import v1.az.unibank.softpos.utils.UtilV2;
 import com.tranzaxis.schemas.acquiring_admin.BranchId;
 import com.tranzaxis.schemas.acquiring_admin.DesKey;
 import com.tranzaxis.schemas.acquiring_admin.DesKeyWithKek;
@@ -28,6 +27,7 @@ import com.tranzaxis.schemas.tran.TranInvoke;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import v1.az.unibank.softpos.utils.Util;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -43,7 +43,7 @@ import static v1.az.unibank.softpos.utils.ConstantsV2.*;
 @Service
 public class CorporateCustomerV2 implements CustomerCreatorV2 {
     Init init = new Init();
-    private final UtilV2 utilV2;
+    private final Util util;
     private Map<String, String> txParamsMap;
     SoftResponseV2 softResponseV2 = new SoftResponseV2();
 
@@ -51,8 +51,8 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
     @Override
     public ResponseCustomerV2 createCustomer(Company company, String headerRequestorInitiatorRid) throws TransAxisException {
         try {
-            this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
-            ExtIdGeneratorV2 extIdGenerator = new ExtIdGeneratorV2(utilV2);
+            this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+            ExtIdGeneratorV2 extIdGenerator = new ExtIdGeneratorV2(util);
             ResponseCustomerV2 responseCustomerV2 = new ResponseCustomerV2();
             String title = TITLE_MERCHANT + company.getCompanyName();
             SubjectBase.SubjectDocuments subjectDocuments = new Person.SubjectDocuments();
@@ -106,8 +106,8 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public BranchResponse createSubCustomer(BranchV2 branchV2, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
-        ExtIdGeneratorV2 extIdGenerator = new ExtIdGeneratorV2(utilV2);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        ExtIdGeneratorV2 extIdGenerator = new ExtIdGeneratorV2(util);
         BranchResponse branchResponse = new BranchResponse();
         String title = TITLE_MERCHANT + branchV2.getCompanyName();
         Request request = new Request();
@@ -152,7 +152,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public SubCustomerV2 createSubObject(POSV2 POSV2, String headerRequestorInitiatorRid) throws Exception {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         SubCustomerV2 subCustomerV2 = new SubCustomerV2();
         String title = TITLE_MERCHANT + POSV2.getTerminalName();
         Request request = new Request();
@@ -200,7 +200,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public Response generateSettlementContractRequest(String departmentId, POSV2 POSV2, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
         request.setKind(ConstantsV2.TRAN_KIND_MODIFY_CONTRACT);
@@ -236,7 +236,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public Long generateRtpRequestForCommonContract(String departmentId, String contractRid, String headerRequestorInitiatorRid) throws Exception {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         Request request = new Request();
         Request.Specific specific = new Request.Specific();
         Request.Specific.Admin admin = new Request.Specific.Admin();
@@ -272,14 +272,14 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public TerminalResponseV2 createTerminal(POSV2 POSV2, String headerRequestorInitiatorRid) throws Exception {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
-        KeyGenerator keyGenerator = new KeyGenerator(utilV2);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        KeyGenerator keyGenerator = new KeyGenerator(util);
         SubCustomerV2 subCustomerV2 = createSubObject(POSV2, headerRequestorInitiatorRid);
         Long contractId = subCustomerV2.getCommonContractId();
         String externalId = subCustomerV2.getExternalId();
         String stlContractId = subCustomerV2.getSettlementContractId();
         String terminalName = POSV2.getTerminalName();
-        ExtIdGeneratorV2 extIdGenerator = new ExtIdGeneratorV2(utilV2);
+        ExtIdGeneratorV2 extIdGenerator = new ExtIdGeneratorV2(util);
         TerminalResponseV2 terminalResponseV2 = new TerminalResponseV2();
         String terminalRid = extIdGenerator.getTerminalRid(headerRequestorInitiatorRid);
         if (terminalRid != null) {
@@ -377,7 +377,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public SoftResponseV2 changeStatusTerminal(String id, String headerRequestorInitiatorRid, String status) throws TransAxisException, JAXBException {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
         Request.Specific specific = new Request.Specific();
@@ -411,7 +411,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TermStatusResponse terminalDetails = new TermStatusResponse();
         TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
@@ -459,7 +459,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
     public SoftResponseV2 deleteTerminal(String id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         String termStatus = getStatusTerminal(Long.valueOf(id), headerRequestorInitiatorRid).getStatus();
         if (termStatus.equals(TERMINAL_NEW_STATUS)) {
-            this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+            this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
             TranInvoke tranInvoke = new TranInvoke();
             Request request = new Request();
             Request.Specific specific = new Request.Specific();
@@ -495,7 +495,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public SoftResponseV2 changeMcc(String departmentId, String headerRequestorInitiatorRid, String mccId) throws JAXBException, TransAxisException {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
         request.setKind(ConstantsV2.TRAN_KIND_MODIFY_SUBJECT);
@@ -529,7 +529,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public SoftResponseV2 changeAccountNumber(AccountChanges accountChanges, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
         request.setKind(ConstantsV2.TRAN_KIND_MODIFY_CONTRACT);

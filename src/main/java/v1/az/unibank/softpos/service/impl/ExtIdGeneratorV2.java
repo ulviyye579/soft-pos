@@ -4,7 +4,6 @@ import v1.az.unibank.softpos.exceptionsV2.TransAxisException;
 import v1.az.unibank.softpos.methodsV2.Init;
 import v1.az.unibank.softpos.service.ExternalIdGeneratorV2;
 import v1.az.unibank.softpos.utils.ConstantsV2;
-import v1.az.unibank.softpos.utils.UtilV2;
 import com.tranzaxis.schemas.subjects_admin.Corporation;
 import com.tranzaxis.schemas.subjects_admin.Subject;
 import com.tranzaxis.schemas.tran.Request;
@@ -13,6 +12,7 @@ import com.tranzaxis.schemas.tran.TranInvoke;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import v1.az.unibank.softpos.utils.Util;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -27,13 +27,13 @@ import java.util.Map;
 public class ExtIdGeneratorV2 implements ExternalIdGeneratorV2 {
 
     Init init = new Init();
-    private final UtilV2 utilV2;
+    private final Util util;
     private Map<String, String> txParamsMap;
 
     @Override
     public String setExternalId(Long clientId, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
         TranInvoke tranInvoke = new TranInvoke();
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         String externalId = "UP" + clientId;
         Request rtpRequest = new Request();
         rtpRequest.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
@@ -69,7 +69,7 @@ public class ExtIdGeneratorV2 implements ExternalIdGeneratorV2 {
     @Override
     public String getTerminalRid(String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
         String termRid = null;
-        this.txParamsMap = utilV2.getTxParams(headerRequestorInitiatorRid);
+        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         TranInvoke tranInvoke = new TranInvoke();
         Request request = new Request();
         request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
