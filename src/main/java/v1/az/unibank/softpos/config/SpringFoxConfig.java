@@ -20,17 +20,17 @@ public class SpringFoxConfig {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
-//    @Bean
-//    public Docket api() {
-//        return new Docket(DocumentationType.SWAGGER_2)
-//                .select()
-//                .apis(RequestHandlerSelectors.any())
-//                .paths(PathSelectors.any())
-//                .build()
-//                .securityContexts(Collections.singletonList(securityContext()))
-//                .securitySchemes(List.of(apiKey()))
-//                .apiInfo(apiInfo());
-//    }
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
+                .build()
+                .securityContexts(Collections.singletonList(securityContext()))
+                .securitySchemes(List.of(apiKey()))
+                .apiInfo(apiInfo());
+    }
     @Bean
     public Docket swaggerApiV1() {
         return new Docket(DocumentationType.SWAGGER_2)
