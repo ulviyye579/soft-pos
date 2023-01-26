@@ -37,9 +37,12 @@ public class SpringFoxConfig {
                 .groupName("softpos-api-1.1")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("v1.az.unibank.softpos.controllers"))
-                .paths(regex(".*/v1.1.*"))
+                .paths(regex(".*/v1.*"))
                 .build()
-                .apiInfo(new ApiInfoBuilder().version("v1.1").title("soft-pos-generator").description("Documentation SoftPos API v1.1").build());
+                .apiInfo(new ApiInfoBuilder().version("v1.1").title("soft-pos-generator").description("Documentation SoftPos API v1.1").build())
+                .securityContexts(Collections.singletonList(securityContext()))
+                .securitySchemes(List.of(apiKey()))
+                .apiInfo(apiInfo());
     }
 
     @Bean
@@ -48,9 +51,12 @@ public class SpringFoxConfig {
                 .groupName("softpos-api-1.2")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("v1.az.unibank.softpos.controllers"))
-                .paths(regex(".*/v1.2.*"))
+                .paths(regex(".*/v2.*"))
                 .build()
-                .apiInfo(new ApiInfoBuilder().version("v1.2").title("soft-pos-generator").description("Documentation SoftPos API v1.2").build());
+                .apiInfo(new ApiInfoBuilder().version("v1.2").title("soft-pos-generator").description("Documentation SoftPos API v1.2").build())
+                .securityContexts(Collections.singletonList(securityContext()))
+                .securitySchemes(List.of(apiKey()))
+                .apiInfo(apiInfo());
     }
     private ApiInfo apiInfo() {
         return new ApiInfo(

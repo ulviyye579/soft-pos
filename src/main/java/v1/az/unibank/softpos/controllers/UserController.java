@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/v1/soft/pos/user")
 public class UserController {
     private final Util util;
 
-    @PostMapping(value ="/v1.1")
+    @PostMapping
     public ResponseEntity<User> login(@RequestParam("user") String username, @RequestParam("password") String password) {
 
         if (!util.getUser().equals(username)) {
@@ -75,7 +75,7 @@ public class UserController {
         return null;
     }
 
-    @GetMapping(value ="/v1.1/check/token/{token}")
+    @GetMapping(value ="/check/token/{token}")
 //    @GetMapping(value = "/check/token/{token}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserToken> checkTokenV2(@PathVariable String token) {
         UserToken userToken = new UserToken();

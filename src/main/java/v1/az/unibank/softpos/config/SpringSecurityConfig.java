@@ -23,8 +23,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            "/user",
-            "/user/**",
+            "/v1/soft/pos/user",
+            "/v1/soft/pos/user/*",
             "/actuator/health",
             "/actuator/health/**",
             "/actuator/prometheus"

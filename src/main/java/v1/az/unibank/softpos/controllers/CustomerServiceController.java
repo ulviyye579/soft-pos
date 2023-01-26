@@ -26,7 +26,7 @@ import javax.xml.bind.JAXBException;
 
 @Slf4j
 @RestController
-@RequestMapping("/soft/pos")
+@RequestMapping("/v1/soft/pos")
 @RequiredArgsConstructor
 public class CustomerServiceController {
 
@@ -37,7 +37,7 @@ public class CustomerServiceController {
     SubCustomer subcustomer = new SubCustomer();
 
 
-    @PostMapping(value = "/v1.1/corporate-customer",
+    @PostMapping(value = "/corporate-customer",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseCustomer> createCustomer(@Valid @RequestBody Company modelCompany,
                                                            @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
@@ -51,7 +51,7 @@ public class CustomerServiceController {
 
 
     @Deprecated
-    @PostMapping(value = "/v1.1/corporate-customer/subcustomer",
+    @PostMapping(value = "/corporate-customer/subcustomer",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SubCustomer> createSubCustomer(@Valid @RequestBody Branch branch,
                                                          @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
@@ -64,7 +64,7 @@ public class CustomerServiceController {
     }
 
     @Deprecated
-    @PostMapping(value = "/v1.1/corporate-customer/terminal",
+    @PostMapping(value = "/corporate-customer/terminal",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TerminalResponse> createTerminal(@Valid @RequestBody POS pos,
                                                            @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
@@ -77,33 +77,8 @@ public class CustomerServiceController {
         }
     }
 
-    @PostMapping(value = "/v1.2/corporate-customer/subcustomer",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BranchResponse> createSubCustomerV2(@Valid @RequestBody BranchV2 branchV2,
-                                                            @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, v1.az.unibank.softpos.exceptionsV2.TransAxisException {
-        BranchResponse branchResponse ;
-        try {
-            branchResponse = creatorV2.createSubCustomer(branchV2,headerRequestorInitiatorRid);
-            return ResponseEntity.ok(branchResponse);
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-    }
 
-    @PostMapping(value = "/v1.2/corporate-customer/terminal",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TerminalResponseV2> createTerminalV2(@Valid @RequestBody POSV2 posV2,
-                                                             @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, v1.az.unibank.softpos.exceptionsV2.TransAxisException {
-        try{
-            TerminalResponseV2 terminalResponseV2;
-            terminalResponseV2 = creatorV2.createTerminal(posV2, headerRequestorInitiatorRid);
-            return ResponseEntity.ok(terminalResponseV2);
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-    }
-
-    @PutMapping(value = "/v1.1/corporate-customer/terminal/activation/id/{id}",
+    @PutMapping(value = "corporate-customer/terminal/activation/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponse> activateTerminal(@PathVariable("id") String id,
                                                          @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
@@ -116,7 +91,7 @@ public class CustomerServiceController {
        }
     }
 
-    @PutMapping(value = "/v1.1/corporate-customer/terminal/deactivation/id/{id}",
+    @PutMapping(value = "/corporate-customer/terminal/deactivation/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponse> deactivateTerminal(@PathVariable("id") String id,
                                                            @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
@@ -129,7 +104,7 @@ public class CustomerServiceController {
        }
     }
 
-    @GetMapping(value = "/v1.1/corporate-customer/terminal/status/id/{id}",
+    @GetMapping(value = "corporate-customer/terminal/status/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TermStatusResponse> getStatusTerminal(@PathVariable("id") Long id,
                                                                 @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
@@ -142,7 +117,7 @@ public class CustomerServiceController {
     }
     }
 
-    @PutMapping(value = "/v1.1/corporate-customer/terminal/deletion/id/{id}",
+    @PutMapping(value = "corporate-customer/terminal/deletion/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponse> deleteTerminal(@PathVariable("id") String id,
                                                        @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
@@ -153,7 +128,7 @@ public class CustomerServiceController {
         }
     }
 
-    @PutMapping(value = "/v1.1/corporate-customer/subcustomer/id/{id}/mcc/{mcc}",
+    @PutMapping(value = "corporate-customer/subcustomer/id/{id}/mcc/{mcc}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponse> changeMccId(@PathVariable("id") String departmentId,
                                                     @PathVariable("mcc") String mcc,
@@ -166,7 +141,7 @@ public class CustomerServiceController {
         }
     }
 
-    @PutMapping(value = "/v1.2/corporate-customer/subcustomer/account",
+    @PutMapping(value = "/corporate-customer/subcustomer/account",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponseV2> changeAccount(@Valid @RequestBody AccountChanges account,
                                                         @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid)
