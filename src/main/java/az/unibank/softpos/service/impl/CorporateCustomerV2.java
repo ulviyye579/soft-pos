@@ -360,7 +360,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             log.info(("tranId: " + response.getId()));
             terminalResponseV2.setTermRid(response.getSpecific().getAdmin().getTerminal().getName());
             terminalResponseV2.setTerminalName(terminalName);
-            terminalResponseV2.setRidForAbs(externalId);
+            terminalResponseV2.setAbsRid(externalId);
             terminalResponseV2.setId(String.valueOf(response.getSpecific().getAdmin().getTerminal().getId()));
             terminalResponseV2.setContractId(stlContractId);
             terminalResponseV2.setCode(ConstantsV2.SUCCESS_CODE_000);

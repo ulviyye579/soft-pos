@@ -11,7 +11,7 @@ import lombok.Setter;
 public class TerminalResponseV2 {
 
     private String termRid;
-    private String ridForAbs;
+    private String absRid;
     private String id;
     private String terminalName;
     private String contractId;
