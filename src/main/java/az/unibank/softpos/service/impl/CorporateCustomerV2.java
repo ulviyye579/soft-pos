@@ -329,8 +329,9 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             Terminal.Keys keys = new Terminal.Keys();
             DesKey desKey = new DesKey();
             DesKeyWithKek desKeyWithKek = new DesKeyWithKek();
-            desKey.setId(Long.valueOf(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyId()));
-            desKeyWithKek.setId(Long.valueOf(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyId()));
+            Long id = Long.valueOf(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyId());
+            desKey.setId(id);
+            desKeyWithKek.setId(id);
 
             JAXBElement<DesKey> desKeyJAXBElement1 = new JAXBElement<>(new QName(ConstantsV2.NS_ACQUIRING_ADMIN, "Pmk"), DesKey.class, desKey);
             JAXBElement<DesKeyWithKek> desKeyJAXBElement2 = new JAXBElement<>(new QName(ConstantsV2.NS_ACQUIRING_ADMIN, "Mmk"), DesKeyWithKek.class, desKeyWithKek);
