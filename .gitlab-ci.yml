@@ -1,7 +1,7 @@
 image: maven:3.5-jdk-11-slim
 
-services:
-  - docker:dind
+# services:
+#   - docker:dind
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
