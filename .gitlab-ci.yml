@@ -40,13 +40,15 @@ build:
     - cat .m2/settings.xml
     - mvn $MAVEN_OPTS -Dmaven.test.skip=true package
 
-release:
+release:develop:
   stage: release
-  image: docker:latest
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   script:
-    - docker login -u $CI_REGISTRY_USER  -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build . -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID -t $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(echo -n ${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD}| base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor   --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --insecure --skip-tls-verify  --destination ${CI_REGISTRY}\/${CI_PROJECT_NAMESPACE}\/${CI_PROJECT_NAME}:$CI_COMMIT_SHORT_SHA
 
 .deploy_image:
   stage: deploy
@@ -61,7 +63,7 @@ release:
   extends: .deploy_image
   script:
     - mkdir -p ~/.kube; echo "$CI_K8S_CONFIG_DEV" > ~/.kube/config
-    - sed -ie 's/{{IMAGE_VERSION}}/'"$CI_PIPELINE_ID"'/g ; s/{{ACTIVE_PROFILE}}/'"dev"'/g' deploy/base/deployment.yaml
+    - sed -ie 's/{{VERSION}}/'"$CI_COMMIT_SHORT_SHA"'/g'; s/{{ACTIVE_PROFILE}}/'"dev"'/g' deploy/base/deployment.yaml
     - kubectl apply -k deploy/dev
 
 deploy:dev:manual:
@@ -80,7 +82,7 @@ deploy:prod:
   extends: .deploy_image
   script:
     - mkdir -p ~/.kube; echo "$CI_K8S_CONFIG_PROCDMZ" > ~/.kube/config
-    - sed -ie 's/{{IMAGE_VERSION}}/'"$CI_PIPELINE_ID"'/g ; s/{{ACTIVE_PROFILE}}/'"prod"'/g' deploy/base/deployment.yaml
+    - sed -ie 's/{{VERSION}}/'"$CI_COMMIT_SHORT_SHA"'/g' ; s/{{ACTIVE_PROFILE}}/'"prod"'/g' deploy/base/deployment.yaml
     - kubectl apply -k deploy/prod
   when: manual
   only:
