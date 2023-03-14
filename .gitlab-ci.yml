@@ -63,7 +63,7 @@ release:develop:
   extends: .deploy_image
   script:
     - mkdir -p ~/.kube; echo "$CI_K8S_CONFIG_DEV" > ~/.kube/config
-    - sed -ie 's/{{VERSION}}/'"$CI_COMMIT_SHORT_SHA"'/g'; s/{{ACTIVE_PROFILE}}/'"dev"'/g' deploy/base/deployment.yaml
+    - sed -ie 's/{{IMAGE_VERSION}}/'"$CI_COMMIT_SHORT_SHA"'/g'; s/{{ACTIVE_PROFILE}}/'"dev"'/g' deploy/base/deployment.yaml
     - kubectl apply -k deploy/dev
 
 deploy:dev:manual:
@@ -82,7 +82,7 @@ deploy:prod:
   extends: .deploy_image
   script:
     - mkdir -p ~/.kube; echo "$CI_K8S_CONFIG_PROCDMZ" > ~/.kube/config
-    - sed -ie 's/{{VERSION}}/'"$CI_COMMIT_SHORT_SHA"'/g' ; s/{{ACTIVE_PROFILE}}/'"prod"'/g' deploy/base/deployment.yaml
+    - sed -ie 's/{{IMAGE_VERSION}}/'"$CI_COMMIT_SHORT_SHA"'/g' ; s/{{ACTIVE_PROFILE}}/'"prod"'/g' deploy/base/deployment.yaml
     - kubectl apply -k deploy/prod
   when: manual
   only:
