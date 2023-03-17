@@ -329,7 +329,8 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             Terminal.Keys keys = new Terminal.Keys();
             DesKey desKey = new DesKey();
             DesKeyWithKek desKeyWithKek = new DesKeyWithKek();
-            Long id = Long.valueOf(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyId());
+            KeyValues keyValues = keyGenerator.generateKey(headerRequestorInitiatorRid);
+            Long id = Long.valueOf(keyValues.getKeyId());
             desKey.setId(id);
             desKeyWithKek.setId(id);
 
@@ -366,8 +367,8 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             terminalResponseV2.setContractId(stlContractId);
             terminalResponseV2.setCode(ConstantsV2.SUCCESS_CODE_000);
             terminalResponseV2.setDescription(ConstantsV2.APPROVED_RESULT);
-            terminalResponseV2.setKcv(keyGenerator.generateKey(headerRequestorInitiatorRid).getKcv());
-            terminalResponseV2.setKeyValue(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyVal());
+            terminalResponseV2.setKcv(keyValues.getKcv());
+            terminalResponseV2.setKeyValue(keyValues.getKeyVal());
             return terminalResponseV2;
         }
         return terminalResponseV2;

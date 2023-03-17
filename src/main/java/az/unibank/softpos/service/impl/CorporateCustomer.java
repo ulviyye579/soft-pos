@@ -282,7 +282,8 @@ public class CorporateCustomer implements CustomerCreator {
             Terminal.Keys keys = new Terminal.Keys();
             DesKey desKey = new DesKey();
             DesKeyWithKek desKeyWithKek = new DesKeyWithKek();
-            Long id = Long.valueOf(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyId());
+            KeyValues keyValues = keyGenerator.generateKey(headerRequestorInitiatorRid);
+            Long id = Long.valueOf(keyValues.getKeyId());
             desKey.setId(id);
             desKeyWithKek.setId(id);
 
@@ -317,8 +318,8 @@ public class CorporateCustomer implements CustomerCreator {
             terminalResponse.setId(String.valueOf(response.getSpecific().getAdmin().getTerminal().getId()));
             terminalResponse.setCode(Constants.SUCCESS_CODE_000);
             terminalResponse.setDescription(Constants.APPROVED_RESULT);
-            terminalResponse.setKcv(keyGenerator.generateKey(headerRequestorInitiatorRid).getKcv());
-            terminalResponse.setKeyValue(keyGenerator.generateKey(headerRequestorInitiatorRid).getKeyVal());
+            terminalResponse.setKcv(keyValues.getKcv());
+            terminalResponse.setKeyValue(keyValues.getKeyVal());
             return terminalResponse;
         }
         return terminalResponse;
