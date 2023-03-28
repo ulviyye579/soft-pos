@@ -246,7 +246,7 @@ public class CorporateCustomer implements CustomerCreator {
             terminal.setTermType(Constants.TERMINAL_TYPE);
             JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(Constants.NS_EXTERNAL_QNAME, String.class, terminalRid);
             terminal.setExternalRid(jaxbElementExternalRid);
-            terminal.setStatus("N");
+            terminal.setStatus("A");
             JAXBElement<String> jaxbElementTitle = new JAXBElement<>(Constants.NS_TITLE_QNAME, String.class, terminalName);
             terminal.setTitle(jaxbElementTitle);
 
