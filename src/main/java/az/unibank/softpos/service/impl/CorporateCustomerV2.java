@@ -293,7 +293,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             terminal.setTermType(ConstantsV2.TERMINAL_TYPE);
             JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(ConstantsV2.NS_EXTERNAL_QNAME, String.class, externalId);
             terminal.setExternalRid(jaxbElementExternalRid);
-            terminal.setStatus("N");
+            terminal.setStatus("A");
             JAXBElement<String> jaxbElementTitle = new JAXBElement<>(ConstantsV2.NS_TITLE_QNAME, String.class, terminalName);
             terminal.setTitle(jaxbElementTitle);
 
