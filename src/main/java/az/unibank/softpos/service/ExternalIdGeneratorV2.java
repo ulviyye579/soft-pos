@@ -1,6 +1,6 @@
 package az.unibank.softpos.service;
 
-import az.unibank.softpos.exceptionsV2.TransAxisException;
+import az.unibank.softpos.exceptions.TransAxisException;
 
 import javax.xml.bind.JAXBException;
 

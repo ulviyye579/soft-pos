@@ -1,4 +1,4 @@
-package az.unibank.softpos.dtoV2.requests;
+package az.unibank.softpos.dtov2.requests;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

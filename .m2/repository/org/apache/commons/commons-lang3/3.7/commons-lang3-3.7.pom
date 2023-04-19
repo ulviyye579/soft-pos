@@ -833,7 +833,7 @@
         <jdk>9</jdk>
       </activation>
       <properties>
-        <!-- LANG-1265: allow tests to access private fields/methodsV2 of java.base classes via reflection -->
+        <!-- LANG-1265: allow tests to access private fields/methodsv2 of java.base classes via reflection -->
         <argLine>-Xmx512m --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
         <!-- versions below 3.0.0 do not work with java 9 -->
         <commons.javadoc.version>3.0.0-M1</commons.javadoc.version>

@@ -1,16 +1,13 @@
 package az.unibank.softpos.controllers;
 
-import az.unibank.softpos.dto.responses.ResponseCustomer;
-import az.unibank.softpos.dto.responses.SoftResponse;
-import az.unibank.softpos.dtoV2.requests.AccountChanges;
-import az.unibank.softpos.dtoV2.requests.BranchV2;
-import az.unibank.softpos.dtoV2.requests.Company;
-import az.unibank.softpos.dtoV2.requests.POSV2;
-import az.unibank.softpos.dtoV2.responses.BranchResponse;
-import az.unibank.softpos.dtoV2.responses.ResponseCustomerV2;
-import az.unibank.softpos.dtoV2.responses.SoftResponseV2;
-import az.unibank.softpos.dtoV2.responses.TerminalResponseV2;
-import az.unibank.softpos.exceptionsV2.TransAxisException;
+import az.unibank.softpos.dtov2.requests.AccountChanges;
+import az.unibank.softpos.dtov2.requests.BranchV2;
+import az.unibank.softpos.dtov2.requests.Company;
+import az.unibank.softpos.dtov2.requests.POSV2;
+import az.unibank.softpos.dtov2.responses.BranchResponse;
+import az.unibank.softpos.dtov2.responses.ResponseCustomerV2;
+import az.unibank.softpos.dtov2.responses.SoftResponseV2;
+import az.unibank.softpos.dtov2.responses.TerminalResponseV2;
 import az.unibank.softpos.service.CustomerCreatorV2;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import javax.xml.bind.JAXBException;
 
 @Slf4j
 @RestController
@@ -38,7 +34,7 @@ public class CustomerServiceControllerV2 {
     @PostMapping(value = "/corporate-customer",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseCustomerV2> createCustomer(@Valid @RequestBody Company modelCompany,
-                                                             @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, az.unibank.softpos.exceptions.TransAxisException {
+                                                             @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         try{
             responseCustomer= creatorV2.createCustomer(modelCompany, headerRequestorInitiatorRid);
             return ResponseEntity.ok(responseCustomer);
@@ -50,7 +46,7 @@ public class CustomerServiceControllerV2 {
     @PostMapping(value = "/corporate-customer/subcustomer",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BranchResponse> createSubCustomerV2(@Valid @RequestBody BranchV2 branchV2,
-                                                              @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
+                                                              @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         BranchResponse branchResponse ;
         try {
             branchResponse = creatorV2.createSubCustomer(branchV2,headerRequestorInitiatorRid);
@@ -63,7 +59,7 @@ public class CustomerServiceControllerV2 {
     @PostMapping(value = "/corporate-customer/terminal",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TerminalResponseV2> createTerminalV2(@Valid @RequestBody POSV2 posV2,
-                                                               @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
+                                                               @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid){
         try{
             TerminalResponseV2 terminalResponseV2;
             terminalResponseV2 = creatorV2.createTerminal(posV2, headerRequestorInitiatorRid);
@@ -90,7 +86,7 @@ public class CustomerServiceControllerV2 {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SoftResponseV2> changeMccId(@PathVariable("absRid") String departmentId,
                                                     @PathVariable("mcc") String mcc,
-                                                    @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) throws JAXBException, az.unibank.softpos.exceptions.TransAxisException {
+                                                    @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid){
         try {
             softResponse = creatorV2.changeMcc(departmentId, headerRequestorInitiatorRid, mcc);
             return ResponseEntity.ok(softResponse);
