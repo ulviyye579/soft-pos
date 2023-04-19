@@ -1,6 +1,7 @@
 package az.unibank.softpos.methodsv2;
 
 import az.unibank.softpos.dtov2.responses.KeyValues;
+import az.unibank.softpos.exceptions.TransAxisException;
 import az.unibank.softpos.utils.ConstantsV2;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.tran.Request;
@@ -19,7 +20,7 @@ public class KeyGenerator {
         this.util = util;
     }
 
-    public KeyValues generateKey(String headerRequestorInitiatorRid) throws JAXBException {
+    public KeyValues generateKey(String headerRequestorInitiatorRid) throws JAXBException, TransAxisException {
         Map<String, String> txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
         KeyValues keyValues = new KeyValues();
         Request request = new Request();

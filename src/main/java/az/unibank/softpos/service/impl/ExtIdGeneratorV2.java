@@ -1,7 +1,7 @@
 package az.unibank.softpos.service.impl;
 
 import az.unibank.softpos.utils.ConstantsV2;
-import az.unibank.softpos.exceptionsv2.TransAxisException;
+import az.unibank.softpos.exceptions.TransAxisException;
 import az.unibank.softpos.methodsv2.Init;
 import az.unibank.softpos.service.ExternalIdGeneratorV2;
 import com.tranzaxis.schemas.subjects_admin.Corporation;
