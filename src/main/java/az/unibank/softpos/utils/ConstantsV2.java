@@ -9,6 +9,7 @@ public class ConstantsV2 {
     public static final String SUCCESS_CODE_000 = "000";
     public static final String DECLINED_CODE_001 = "001";
 
+    public static final String MESSAGE_FAILED = "FAILED";
     public static final int STANDARD_TIMEOUT = 10000;
 
     public static final String TYPE_RID_CORPORATE = "Corporation customer";
@@ -31,6 +32,7 @@ public class ConstantsV2 {
     public static final Long RISK_PROFILE_ID = 610L;
     public static final Long TYPE_SETTLEMENT_CONTRACT = 344L;
     public static final Long SETTINGS_ID = 221L;
+    public static final String REQUEST_FOR_LOG = "request: ";
 
     public static final String TRAN_KIND_MODIFY_SUBJECT = "ModifySubject";
     public static final String TRAN_KIND_MODIFY_CONTRACT = "ModifyContract";
@@ -45,7 +47,6 @@ public class ConstantsV2 {
     public static final QName NS_TITLE_QNAME = new QName(ConstantsV2.NS_SUBJECTS_ADMIN, "Title");
     public static final QName NS_INST_QNAME = new QName(ConstantsV2.NS_SUBJECTS_ADMIN, "InstId");
     public static final QName NS_PARENT_QNAME = new QName(NS_SUBJECTS_ADMIN, "ParentOrgId");
-    public static final QName NS_DEPARTMENT_RID = new QName(NS_SUBJECTS_ADMIN, "Rid");
     public static final QName NS_MCC_QNAME = new QName(NS_SUBJECTS_ADMIN, "MccId");
     public static final QName NS_TYPE_QNAME = new QName(NS_CONTRACTS_ADMIN, "TypeId");
     public static final QName NS_BRANCH_QNAME = new QName(NS_CONTRACTS_ADMIN, "BranchId");
@@ -60,7 +61,6 @@ public class ConstantsV2 {
     public static final QName NS_ADDRESS_QNAME = new QName(NS_SUBJECTS_ADMIN, "Address");
     public static final String ACTIVE_STATUS = "A";
     public static final String ROLE_CONTRACT = "Current";
-    public static final String DEACTIVATED_STATUS = "C";
     public static final String TERMINAL_NEW_STATUS = "New";
     public static final String TERMINAL_ACTIVE_STATUS = "Active";
     public static final String TERMINAL_BLOCKED_STATUS = "Blocked";

@@ -1,4 +1,4 @@
-package az.unibank.softpos.dtoV2;
+package az.unibank.softpos.dtov2;
 
 import java.util.HashMap;
 import java.util.List;

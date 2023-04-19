@@ -25,5 +25,4 @@ public interface CustomerCreator {
 
     SoftResponse changeMcc(String id, String headerRequestorInitiatorRid, String mccId) throws JAXBException, TransAxisException;
 
-//    SoftResponse changeAccount(SettlementContractDetails settlementContractDetails, String headerRequestorInitiatorRid) throws JAXBException, TransAxisException;
 }

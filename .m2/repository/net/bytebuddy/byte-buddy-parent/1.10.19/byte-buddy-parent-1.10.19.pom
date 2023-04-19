@@ -33,7 +33,7 @@
       - jacoco:prepare-agent verify jacoco:report - Computes coverage for test suite (all modules)
       - org.pitest:pitest-maven:mutationCoverage - Runs mutation tests (all modules)
       - spotbugs:spotbugs spotbugs:gui - Runs spotbugs and shows a report in a graphical interface (module specific)
-      - com.github.ferstl:jitwatch-jarscan-maven-plugin:scan - Finds all methodsV2 above HotSpot's inlining threshold
+      - com.github.ferstl:jitwatch-jarscan-maven-plugin:scan - Finds all methodsv2 above HotSpot's inlining threshold
       - clirr:check - Checks for binary changes in the API
     -->
 
@@ -214,7 +214,7 @@
                     <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs</spotbugsXmlOutputDirectory>
                 </configuration>
             </plugin>
-            <!-- Enable scanning for methodsV2 above the inlining threshold (JDK 7+) -->
+            <!-- Enable scanning for methodsv2 above the inlining threshold (JDK 7+) -->
             <plugin>
                 <groupId>com.github.ferstl</groupId>
                 <artifactId>jitwatch-jarscan-maven-plugin</artifactId>

@@ -1,4 +1,4 @@
-package az.unibank.softpos.methodsV2;
+package az.unibank.softpos.methodsv2;
 
 import az.unibank.softpos.utils.ConstantsV2;
 import az.unibank.softpos.exceptionsV2.TransAxisException;

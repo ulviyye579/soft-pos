@@ -3,7 +3,6 @@ package az.unibank.softpos.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
@@ -20,17 +19,6 @@ public class SpringFoxConfig {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
-//    @Bean
-//    public Docket api() {
-//        return new Docket(DocumentationType.SWAGGER_2)
-//                .select()
-//                .apis(RequestHandlerSelectors.any())
-//                .paths(PathSelectors.any())
-//                .build()
-//                .securityContexts(Collections.singletonList(securityContext()))
-//                .securitySchemes(List.of(apiKey()))
-//                .apiInfo(apiInfo());
-//    }
     @Bean
     public Docket swaggerApiV1() {
         return new Docket(DocumentationType.SWAGGER_2)

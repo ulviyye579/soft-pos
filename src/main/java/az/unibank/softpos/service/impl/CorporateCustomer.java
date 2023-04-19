@@ -10,6 +10,7 @@ import az.unibank.softpos.dto.requests.Company;
 import az.unibank.softpos.dto.requests.Branch;
 import az.unibank.softpos.dto.requests.POS;
 import az.unibank.softpos.exceptions.TransAxisException;
+import az.unibank.softpos.utils.ConstantsV2;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.acquiring_admin.BranchId;
 import com.tranzaxis.schemas.acquiring_admin.DesKey;
@@ -247,8 +248,8 @@ public class CorporateCustomer implements CustomerCreator {
             JAXBElement<String> jaxbElementExternalRid = new JAXBElement<>(Constants.NS_EXTERNAL_QNAME, String.class, terminalRid);
             terminal.setExternalRid(jaxbElementExternalRid);
             terminal.setStatus("A");
-            JAXBElement<String> jaxbElementTitle = new JAXBElement<>(Constants.NS_TITLE_QNAME, String.class, terminalName);
-            terminal.setTitle(jaxbElementTitle);
+            JAXBElement<String> jaxTitle = new JAXBElement<>(new QName(ConstantsV2.NS_ACQUIRING_ADMIN, "Title"), String.class, terminalName);
+            terminal.setTitle(jaxTitle);
 
             BranchId branchId = new BranchId();
             branchId.setId(Constants.BRANCH_ID);

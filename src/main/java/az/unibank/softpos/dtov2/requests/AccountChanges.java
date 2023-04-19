@@ -1,4 +1,4 @@
-package az.unibank.softpos.dtoV2.requests;
+package az.unibank.softpos.dtov2.requests;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class AccountChanges {
     @ApiModelProperty( example = "8786951")
-    private String AbsRid;
+    private String absRid;
     @ApiModelProperty( example = "17552161")
     private String contractId;
     @ApiModelProperty( example = "AZ23789542632813440060AZN004")

@@ -1,5 +1,6 @@
-package az.unibank.softpos.methodsV2;
+package az.unibank.softpos.methodsv2;
 
+import az.unibank.softpos.exceptions.SoftPosRuntimeException;
 import az.unibank.softpos.utils.ConstantsV2;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.tran.Request;
@@ -31,7 +32,7 @@ public class JaxbProcessor {
             instance = new JaxbProcessor();
 
         } catch (Exception e) {
-            throw new RuntimeException("Exception occurred while creating singleton instance" + e.getMessage());
+            throw new SoftPosRuntimeException("Exception occurred while creating singleton instance" + e.getMessage());
         }
     }
 
