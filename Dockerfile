@@ -8,3 +8,4 @@ FROM gitlab.unibank.lan:4567/devops/image:openjdk-11-jdk-slim
 COPY --from=maven target/SoftPos-0.0.1-SNAPSHOT.war app.war
 EXPOSE 8080 8081
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","app.war"]
+
