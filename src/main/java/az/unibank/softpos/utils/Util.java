@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Ulviyya Musayeva
@@ -32,7 +30,7 @@ public class Util {
     private String user;
 
     @Value("${request.timeout}")
-    private Long timeout;
+    private String timeout;
 
     @Value("${request.header}")
     private String header;
@@ -41,6 +39,11 @@ public class Util {
     @Value("${request.password}")
     private String requestPassword;
 
+    private final Configs configs;
+
+    public Util(Configs configs) {
+        this.configs = configs;
+    }
 
     public static String getDateTime() {
         Date date = new Date();
@@ -49,21 +52,33 @@ public class Util {
     }
 
 
-    public Map<String, String> getTxParams(String httpHeaders) {
-        Map<String, String> txParamsHashMap = new HashMap<>();
+//    public Map<String, String> getTxParams(String httpHeaders) {
+//        Map<String, String> txParamsHashMap = new HashMap<>();
+//        try {
+//            log.trace("requestor-inst-rid : " + httpHeaders);
+//            txParamsHashMap.put(Constants.RTP_URL, endpointDefault);
+//            txParamsHashMap.put(Constants.INITIATOR_RID, initiatorRidDefault);
+//            log.trace("RTP parameters : " + txParamsHashMap);
+//        } catch (Exception ex) {
+//            txParamsHashMap.put(Constants.RTP_URL, endpointDefault);
+//            txParamsHashMap.put(Constants.INITIATOR_RID, initiatorRidDefault);
+//        }
+//        return txParamsHashMap;
+//    }
+
+    public Configs getTxParams(String httpHeaders) {
         try {
-            log.trace("requestor-inst-rid : " + httpHeaders);
-            txParamsHashMap.put(Constants.RTP_URL, endpointDefault);
-            txParamsHashMap.put(Constants.INITIATOR_RID, initiatorRidDefault);
-            log.trace("RTP parameters : " + txParamsHashMap);
-        } catch (Exception ex) {
-            txParamsHashMap.put(Constants.RTP_URL, endpointDefault);
-            txParamsHashMap.put(Constants.INITIATOR_RID, initiatorRidDefault);
+            configs.setRtpUrl(endpointDefault);
+            configs.setInitiatorRid(initiatorRidDefault);
+            configs.setStandardTimeout(timeout);
+
+            return configs;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return txParamsHashMap;
     }
 
-public JwtToken unmarshal(String jsonString){
+        public JwtToken unmarshal(String jsonString){
     Gson g = new Gson();
     return g.fromJson(jsonString, JwtToken.class);
 }

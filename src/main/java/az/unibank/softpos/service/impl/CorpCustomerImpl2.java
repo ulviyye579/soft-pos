@@ -2,13 +2,14 @@ package az.unibank.softpos.service.impl;
 
 import az.unibank.softpos.dtov2.requests.AccountChanges;
 import az.unibank.softpos.dtov2.requests.BranchV2;
-import az.unibank.softpos.dtov2.requests.Company;
+import az.unibank.softpos.dtov2.requests.CompanyAttributes;
 import az.unibank.softpos.dtov2.requests.POSV2;
 import az.unibank.softpos.dtov2.responses.*;
 import az.unibank.softpos.exceptions.TransAxisException;
 import az.unibank.softpos.methodsv2.Init;
-import az.unibank.softpos.methodsv2.KeyGenerator;
+import az.unibank.softpos.methodsv2.KeyGeneratorV2;
 import az.unibank.softpos.service.CustomerCreatorV2;
+import az.unibank.softpos.utils.Configs;
 import az.unibank.softpos.utils.ConstantsV2;
 import az.unibank.softpos.utils.Util;
 import com.tranzaxis.schemas.acquiring_admin.BranchId;
@@ -33,29 +34,28 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
-import java.util.Map;
+
 import static az.unibank.softpos.utils.ConstantsV2.REQUEST_FOR_LOG;
 
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class CorporateCustomerV2 implements CustomerCreatorV2 {
+public class CorpCustomerImpl2 implements CustomerCreatorV2 {
     Init init = new Init();
     private final Util util;
-    private Map<String, String> txParamsMap;
     SoftResponseV2 softResponseV2 = new SoftResponseV2();
     Request request = new Request();
-
+    private Configs configs;
 
     @Override
-    public ResponseCustomerV2 createCustomer(Company company, String headerRequestorInitiatorRid) throws TransAxisException {
+    public CorpCustomerDetails2 createCustomer(CompanyAttributes companyAttributes, String headerRequestorInitiatorRid) throws TransAxisException {
         try {
-            this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-            ResponseCustomerV2 responseCustomerV2 = new ResponseCustomerV2();
-            String title = ConstantsV2.TITLE_MERCHANT + company.getCompanyName();
+            configs = util.getTxParams(headerRequestorInitiatorRid);
+            CorpCustomerDetails2 corpCustomerDetails2 = new CorpCustomerDetails2();
+            String title = ConstantsV2.TITLE_MERCHANT + companyAttributes.getCompanyName();
             SubjectBase.SubjectDocuments subjectDocuments = new Person.SubjectDocuments();
-            request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
+            request.setInitiatorRid(configs.getInitiatorRid());
             request.setKind(ConstantsV2.TRAN_KIND_MODIFY_SUBJECT);
             request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
             Request.Specific specific = new Request.Specific();
@@ -66,7 +66,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             JAXBElement<SubjectBase.SubjectDocuments> documentsJAXBElement = new JAXBElement<>(ConstantsV2.NS_SUBJECTS_ADMIN_QNAME, SubjectBase.SubjectDocuments.class, subjectDocuments);
             Document document = new Document();
             document.setTypeRid(ConstantsV2.TYPE_RID_DOC);
-            document.setRid(company.getInnRid());
+            document.setRid(companyAttributes.getInnRid());
             subjectDocuments.getDocument().add(document);
             corp.setSubjectDocuments(documentsJAXBElement);
             JAXBElement<String> jaxbElementTitle = new JAXBElement<>(ConstantsV2.NS_TITLE_QNAME, String.class, title);
@@ -84,17 +84,17 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             request.setSpecific(specific);
             String xmlBody = init.jaxbProcessor.marshallToXml(request);
             log.trace("xmlBody : " + xmlBody);
-            Response response = init.callSOAP(xmlBody, txParamsMap.get(ConstantsV2.RTP_URL));
+            Response response = init.callSOAP(xmlBody, configs.getRtpUrl());
             if (response.getResult().equalsIgnoreCase(ConstantsV2.APPROVED_RESULT)) {
                 Long customerId = response.getSpecific().getAdmin().getSubject().getCorporation().getId();
-                responseCustomerV2.setId(customerId.toString());
-                responseCustomerV2.setCode(ConstantsV2.SUCCESS_CODE_000);
-                responseCustomerV2.setDescription(ConstantsV2.OK_RESULT);
+                corpCustomerDetails2.setId(customerId.toString());
+                corpCustomerDetails2.setCode(ConstantsV2.SUCCESS_CODE_000);
+                corpCustomerDetails2.setDescription(ConstantsV2.OK_RESULT);
             } else {
-                responseCustomerV2.setCode(ConstantsV2.DECLINED_CODE_001);
-                responseCustomerV2.setDescription(response.getResult() + ", " + response.getDeclineReason());
+                corpCustomerDetails2.setCode(ConstantsV2.DECLINED_CODE_001);
+                corpCustomerDetails2.setDescription(response.getResult() + ", " + response.getDeclineReason());
             }
-            return responseCustomerV2;
+            return corpCustomerDetails2;
         } catch (Exception e) {
             throw new TransAxisException(e);
         }
@@ -102,55 +102,55 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public BranchResponse createSubCustomer(BranchV2 branchV2, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        ExtIdGeneratorV2 extIdGenerator = new ExtIdGeneratorV2(util);
-        BranchResponse branchResponse = new BranchResponse();
-        String title = ConstantsV2.TITLE_MERCHANT + branchV2.getCompanyName();
-        request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
-        request.setKind(ConstantsV2.TRAN_KIND_MODIFY_SUBJECT);
-        request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
-        Request.Specific specific = new Request.Specific();
-        Request.Specific.Admin admin = new Request.Specific.Admin();
-        Subject subject = new Subject();
-        Department department = new Department();
-        department.setTypeId(3L);
-        JAXBElement<Long> jaxbElementInstID = new JAXBElement<>(ConstantsV2.NS_INST_QNAME, Long.class, 1L);
-        department.setInstId(jaxbElementInstID);
-        JAXBElement<String> jaxbElementTitle = new JAXBElement<>(ConstantsV2.NS_TITLE_QNAME, String.class, title);
-        department.setTitle(jaxbElementTitle);
-        department.setLatTitle(jaxbElementTitle);
-        department.setLegalTitle(jaxbElementTitle);
-        department.setShortTitle(jaxbElementTitle);
-        JAXBElement<Long> jaxbElementParentOrgId = new JAXBElement<>(ConstantsV2.NS_PARENT_QNAME, Long.class, Long.valueOf(branchV2.getCustomerId()));
-        department.setParentOrgId(jaxbElementParentOrgId);
-        subject.setDepartment(department);
-        admin.setSubject(subject);
-        specific.setAdmin(admin);
-        request.setSpecific(specific);
-        String requestBody = init.jaxbProcessor.marshallToXml(request);
-        log.trace(REQUEST_FOR_LOG + request);
-        Response response = init.callSOAP(requestBody, txParamsMap.get(ConstantsV2.RTP_URL));
-        if (response.getResult().equalsIgnoreCase(ConstantsV2.APPROVED_RESULT)) {
-            String departmentId = response.getSpecific().getAdmin().getSubject().getDepartment().getId().toString();
-            String externalId = extIdGenerator.setExternalId(Long.valueOf(departmentId), headerRequestorInitiatorRid);
-            if (!externalId.isEmpty()) {
-                branchResponse.setSubCustomerId(departmentId);
-                branchResponse.setExternalId(externalId);
-                branchResponse.setResult(ConstantsV2.APPROVED_RESULT);
+            configs = util.getTxParams(headerRequestorInitiatorRid);
+            ExtIdGeneratorV2 extIdGenerator = new ExtIdGeneratorV2(util);
+            BranchResponse branchResponse = new BranchResponse();
+            String title = ConstantsV2.TITLE_MERCHANT + branchV2.getCompanyName();
+            request.setInitiatorRid(configs.getInitiatorRid());
+            request.setKind(ConstantsV2.TRAN_KIND_MODIFY_SUBJECT);
+            request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
+            Request.Specific specific = new Request.Specific();
+            Request.Specific.Admin admin = new Request.Specific.Admin();
+            Subject subject = new Subject();
+            Department department = new Department();
+            department.setTypeId(3L);
+            JAXBElement<Long> jaxbElementInstID = new JAXBElement<>(ConstantsV2.NS_INST_QNAME, Long.class, 1L);
+            department.setInstId(jaxbElementInstID);
+            JAXBElement<String> jaxbElementTitle = new JAXBElement<>(ConstantsV2.NS_TITLE_QNAME, String.class, title);
+            department.setTitle(jaxbElementTitle);
+            department.setLatTitle(jaxbElementTitle);
+            department.setLegalTitle(jaxbElementTitle);
+            department.setShortTitle(jaxbElementTitle);
+            JAXBElement<Long> jaxbElementParentOrgId = new JAXBElement<>(ConstantsV2.NS_PARENT_QNAME, Long.class, Long.valueOf(branchV2.getCustomerId()));
+            department.setParentOrgId(jaxbElementParentOrgId);
+            subject.setDepartment(department);
+            admin.setSubject(subject);
+            specific.setAdmin(admin);
+            request.setSpecific(specific);
+            String requestBody = init.jaxbProcessor.marshallToXml(request);
+            log.trace(REQUEST_FOR_LOG + request);
+            Response response = init.callSOAP(requestBody, configs.getRtpUrl());
+            if (response.getResult().equalsIgnoreCase(ConstantsV2.APPROVED_RESULT)) {
+                String departmentId = response.getSpecific().getAdmin().getSubject().getDepartment().getId().toString();
+                String externalId = extIdGenerator.setExternalId(Long.valueOf(departmentId), headerRequestorInitiatorRid);
+                if (!externalId.isEmpty()) {
+                    branchResponse.setSubCustomerId(departmentId);
+                    branchResponse.setExternalId(externalId);
+                    branchResponse.setResult(ConstantsV2.APPROVED_RESULT);
+                }
+                return branchResponse;
+            } else {
+                throw new TransAxisException(response.getResult() + ", " + response.getDeclineReason());
             }
-            return branchResponse;
-        } else {
-            throw new TransAxisException(response.getResult() + ", " + response.getDeclineReason());
-        }
 
     }
 
     @Override
     public SubCustomerV2 createSubObject(POSV2 posv2, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        configs = util.getTxParams(headerRequestorInitiatorRid);
         SubCustomerV2 subCustomerV2 = new SubCustomerV2();
         String title = ConstantsV2.TITLE_MERCHANT + posv2.getTerminalName();
-        request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
+        request.setInitiatorRid(configs.getInitiatorRid());
         request.setKind(ConstantsV2.TRAN_KIND_MODIFY_SUBJECT);
         request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
         Request.Specific specific = new Request.Specific();
@@ -175,7 +175,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
         request.setSpecific(specific);
         String requestBody = init.jaxbProcessor.marshallToXml(request);
         log.trace(REQUEST_FOR_LOG + request);
-        Response response = init.callSOAP(requestBody, txParamsMap.get(ConstantsV2.RTP_URL));
+        Response response = init.callSOAP(requestBody, configs.getRtpUrl());
         if (response.getResult().equalsIgnoreCase(ConstantsV2.APPROVED_RESULT)) {
             String departmentId = response.getSpecific().getAdmin().getSubject().getDepartment().getId().toString();
             Response settlementContract = generateSettlementContractRequest(departmentId, posv2, headerRequestorInitiatorRid);
@@ -194,8 +194,8 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public Response generateSettlementContractRequest(String departmentId, POSV2 posv2, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
+        configs = util.getTxParams(headerRequestorInitiatorRid);
+        request.setInitiatorRid(configs.getInitiatorRid());
         request.setKind(ConstantsV2.TRAN_KIND_MODIFY_CONTRACT);
         request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
         Request.Specific specific = new Request.Specific();
@@ -222,17 +222,17 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
         specific.setAdmin(admin);
         request.setSpecific(specific);
         String bodyXml = init.jaxbProcessor.marshallToXml(request);
-        Response response = init.callSOAP(bodyXml, txParamsMap.get(ConstantsV2.RTP_URL));
+        Response response = init.callSOAP(bodyXml, configs.getRtpUrl());
         log.trace(REQUEST_FOR_LOG + bodyXml);
         return response;
     }
 
     @Override
     public Long generateRtpRequestForCommonContract(String departmentId, String contractRid, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
+        configs = util.getTxParams(headerRequestorInitiatorRid);
         Request.Specific specific = new Request.Specific();
         Request.Specific.Admin admin = new Request.Specific.Admin();
-        request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
+        request.setInitiatorRid(configs.getInitiatorRid());
         request.setKind(ConstantsV2.TRAN_KIND_MODIFY_CONTRACT);
         request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
         Contract contract = new Contract();
@@ -255,7 +255,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
         specific.setAdmin(admin);
         request.setSpecific(specific);
         String requestCont = init.jaxbProcessor.marshallToXml(request);
-        Response commonResponse = init.callSOAP(requestCont, txParamsMap.get(ConstantsV2.RTP_URL));
+        Response commonResponse = init.callSOAP(requestCont, configs.getRtpUrl());
         if (commonResponse.getResult().equalsIgnoreCase(ConstantsV2.APPROVED_RESULT)) {
             return commonResponse.getSpecific().getAdmin().getContract().getId();
         }
@@ -264,8 +264,8 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public TerminalResponseV2 createTerminal(POSV2 posv2, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        KeyGenerator keyGenerator = new KeyGenerator(util);
+        configs = util.getTxParams(headerRequestorInitiatorRid);
+        KeyGeneratorV2 keyGeneratorV2 = new KeyGeneratorV2(util);
         SubCustomerV2 subCustomerV2 = createSubObject(posv2, headerRequestorInitiatorRid);
         Long contractId = subCustomerV2.getCommonContractId();
         String externalId = subCustomerV2.getSubCustomerId();
@@ -277,7 +277,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
         if (terminalRid != null) {
             Request.Specific specific1 = new Request.Specific();
             Request.Specific.Admin admin1 = new Request.Specific.Admin();
-            request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
+            request.setInitiatorRid(configs.getInitiatorRid());
             request.setKind(ConstantsV2.TRAN_KIND_MODIFY_TERMINAL);
             request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
             request.setOriginatorInstId(1L);
@@ -323,7 +323,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             Terminal.Keys keys = new Terminal.Keys();
             DesKey desKey = new DesKey();
             DesKeyWithKek desKeyWithKek = new DesKeyWithKek();
-            KeyValues keyValues = keyGenerator.generateKey(headerRequestorInitiatorRid);
+            KeyValues keyValues = keyGeneratorV2.generateKey(headerRequestorInitiatorRid);
             Long id = Long.valueOf(keyValues.getKeyId());
             desKey.setId(id);
             desKeyWithKek.setId(id);
@@ -352,7 +352,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
             specific1.setAdmin(admin1);
             request.setSpecific(specific1);
             String xml = init.jaxbProcessor.marshallToXml(request);
-            Response response = init.callSOAP(xml, txParamsMap.get(ConstantsV2.RTP_URL));
+            Response response = init.callSOAP(xml, configs.getRtpUrl());
             log.info(("tranId: " + response.getId()));
             terminalResponseV2.setTermRid(response.getSpecific().getAdmin().getTerminal().getName());
             terminalResponseV2.setTerminalName(terminalName);
@@ -370,13 +370,13 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
 
     @Override
-    public TermStatusResponse getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        TermStatusResponse terminalDetails = new TermStatusResponse();
+    public TermStatusResponseV2 getStatusTerminal(Long id, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
+        configs = util.getTxParams(headerRequestorInitiatorRid);
+        TermStatusResponseV2 terminalDetails = new TermStatusResponseV2();
         TranInvoke tranInvoke = new TranInvoke();
         Request.Specific specific = new Request.Specific();
         Request.Specific.Admin admin = new Request.Specific.Admin();
-        request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
+        request.setInitiatorRid(configs.getInitiatorRid());
         request.setKind("ReadTerminal");
         request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
         admin.setObjectMustExist(true);
@@ -388,7 +388,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
         tranInvoke.setRequest(request);
         StringWriter sw = new StringWriter();
         String xml = init.jaxbProcessor.toXml(sw, tranInvoke);
-        Response response = init.callSOAP(xml, txParamsMap.get(ConstantsV2.RTP_URL));
+        Response response = init.callSOAP(xml, configs.getRtpUrl());
         if (response.getResult().equalsIgnoreCase(ConstantsV2.APPROVED_RESULT)) {
             String status = response.getSpecific().getAdmin().getTerminal().getStatus();
             switch (status) {
@@ -417,8 +417,8 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public SoftResponseV2 changeMcc(String departmentId, String headerRequestorInitiatorRid, String mccId) throws JAXBException, TransAxisException {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
+        configs = util.getTxParams(headerRequestorInitiatorRid);
+        request.setInitiatorRid(configs.getInitiatorRid());
         request.setKind(ConstantsV2.TRAN_KIND_MODIFY_SUBJECT);
         request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
         Request.Specific specific = new Request.Specific();
@@ -434,7 +434,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
         specific.setAdmin(admin);
         request.setSpecific(specific);
         String requestBody = init.jaxbProcessor.marshallToXml(request);
-        Response response = init.callSOAP(requestBody, txParamsMap.get(ConstantsV2.RTP_URL));
+        Response response = init.callSOAP(requestBody, configs.getRtpUrl());
         response.getResult();
         if (response.getResult().equalsIgnoreCase(ConstantsV2.APPROVED_RESULT)) {
             softResponseV2.setId(ConstantsV2.SUCCESS_CODE_000);
@@ -450,8 +450,8 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
 
     @Override
     public SoftResponseV2 changeAccountNumber(AccountChanges accountChanges, String headerRequestorInitiatorRid) throws TransAxisException, JAXBException {
-        this.txParamsMap = util.getTxParams(headerRequestorInitiatorRid);
-        request.setInitiatorRid(txParamsMap.get(ConstantsV2.INITIATOR_RID));
+        configs = util.getTxParams(headerRequestorInitiatorRid);
+        request.setInitiatorRid(configs.getInitiatorRid());
         request.setKind(ConstantsV2.TRAN_KIND_MODIFY_CONTRACT);
         request.setLifePhase(ConstantsV2.LIFE_PHASE_SINGLE);
         Request.Specific specific = new Request.Specific();
@@ -479,7 +479,7 @@ public class CorporateCustomerV2 implements CustomerCreatorV2 {
         specific.setAdmin(admin);
         request.setSpecific(specific);
         String bodyXml = init.jaxbProcessor.marshallToXml(request);
-        Response response = init.callSOAP(bodyXml, txParamsMap.get(ConstantsV2.RTP_URL));
+        Response response = init.callSOAP(bodyXml, configs.getRtpUrl());
         if (response.getResult().equalsIgnoreCase(ConstantsV2.APPROVED_RESULT)) {
             softResponseV2.setId(ConstantsV2.SUCCESS_CODE_000);
             softResponseV2.setResult(Boolean.TRUE);

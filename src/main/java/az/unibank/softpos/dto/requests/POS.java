@@ -1,11 +1,13 @@
 package az.unibank.softpos.dto.requests;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 
 @Data
+@Builder
 public class POS {
     @NotEmpty
     @ApiModelProperty( example = "ZARA 28MAll")

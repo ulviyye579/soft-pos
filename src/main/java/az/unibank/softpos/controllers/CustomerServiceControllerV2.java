@@ -2,10 +2,10 @@ package az.unibank.softpos.controllers;
 
 import az.unibank.softpos.dtov2.requests.AccountChanges;
 import az.unibank.softpos.dtov2.requests.BranchV2;
-import az.unibank.softpos.dtov2.requests.Company;
+import az.unibank.softpos.dtov2.requests.CompanyAttributes;
 import az.unibank.softpos.dtov2.requests.POSV2;
 import az.unibank.softpos.dtov2.responses.BranchResponse;
-import az.unibank.softpos.dtov2.responses.ResponseCustomerV2;
+import az.unibank.softpos.dtov2.responses.CorpCustomerDetails2;
 import az.unibank.softpos.dtov2.responses.SoftResponseV2;
 import az.unibank.softpos.dtov2.responses.TerminalResponseV2;
 import az.unibank.softpos.service.CustomerCreatorV2;
@@ -28,15 +28,15 @@ public class CustomerServiceControllerV2 {
     private final CustomerCreatorV2 creatorV2;
     SoftResponseV2 softResponse = new SoftResponseV2();
 
-    ResponseCustomerV2 responseCustomer = new ResponseCustomerV2();
+    CorpCustomerDetails2 responseCustomer = new CorpCustomerDetails2();
 
 
     @PostMapping(value = "/corporate-customer",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseCustomerV2> createCustomer(@Valid @RequestBody Company modelCompany,
-                                                             @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
+    public ResponseEntity<CorpCustomerDetails2> createCustomer(@Valid @RequestBody CompanyAttributes modelCompanyAttributes,
+                                                               @RequestHeader(value = "requestor-inst-rid", required = false) String headerRequestorInitiatorRid) {
         try{
-            responseCustomer= creatorV2.createCustomer(modelCompany, headerRequestorInitiatorRid);
+            responseCustomer= creatorV2.createCustomer(modelCompanyAttributes, headerRequestorInitiatorRid);
             return ResponseEntity.ok(responseCustomer);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());

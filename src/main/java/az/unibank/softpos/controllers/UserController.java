@@ -50,7 +50,7 @@ public class UserController {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String getJWTToken(String username, String password) {
+    public String getJWTToken(String username, String password) {
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("ROLE_USER");
         try {
@@ -69,6 +69,7 @@ public class UserController {
             return "SOFT_POS_" + token;
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
+            ex.getCause();
         }
 
         return null;

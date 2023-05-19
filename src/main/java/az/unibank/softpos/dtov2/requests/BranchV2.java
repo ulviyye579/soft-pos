@@ -1,8 +1,10 @@
 package az.unibank.softpos.dtov2.requests;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class BranchV2 {
     @ApiModelProperty( example = "ZARA 28MAll")
     private String companyName;

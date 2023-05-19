@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TermStatusResponse {
+public class TermStatusResponseV2 {
 
     private String terminalRid;
     private String status;

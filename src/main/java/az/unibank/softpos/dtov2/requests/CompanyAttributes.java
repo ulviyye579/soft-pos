@@ -1,11 +1,17 @@
 package az.unibank.softpos.dtov2.requests;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
-@Data
-public class Company {
+@Getter
+@Setter
+@Builder
+public class CompanyAttributes {
     @ApiModelProperty( example = "ZARA")
     private String companyName;
 

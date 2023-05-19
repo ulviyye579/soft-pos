@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 @NoArgsConstructor
 @XmlRootElement(name = "Response")
 @XmlType(propOrder = {"id", "code", "description"})
-public class ResponseCustomerV2 {
+public class CorpCustomerDetails2 {
         private String id;
         private String code;
         private String description;
