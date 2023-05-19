@@ -15,6 +15,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
             "/v2/api-docs",
+            "/v2/soft/pos/corporate-customer",
             "/swagger-resources",
             "/swagger-resources/**",
             "/configuration/ui",
@@ -38,5 +39,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated();
     }
+
 }
 
